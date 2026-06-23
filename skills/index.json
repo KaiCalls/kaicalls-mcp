@@ -1,0 +1,30 @@
+{
+  "$schema": "https://agentskills.io/schema/index.json",
+  "_comment": "Mirror of https://www.kaicalls.com/.well-known/agent-skills/index.json — the product connectors KaiCalls publishes. The live endpoint adds a computed sha256 per entry. These are customer-facing connectors, NOT internal tooling.",
+  "skills": [
+    {
+      "name": "kaicalls-mcp",
+      "type": "mcp",
+      "description": "Connect to KaiCalls via MCP to make calls, check statuses, and retrieve transcripts.",
+      "url": "https://www.kaicalls.com/.well-known/mcp/server-card.json"
+    },
+    {
+      "name": "kaicalls-api",
+      "type": "openapi",
+      "description": "KaiCalls REST API for managing AI phone agents, calls, leads, and campaigns.",
+      "url": "https://www.kaicalls.com/llms.txt"
+    },
+    {
+      "name": "kaicalls-agent-discovery",
+      "type": "a2a",
+      "description": "Agent-to-Agent discovery card for KaiCalls AI phone agents.",
+      "url": "https://www.kaicalls.com/.well-known/agent.json"
+    },
+    {
+      "name": "kaicalls-agent-signup",
+      "type": "openapi",
+      "description": "Programmatic API-first onboarding and MCP server connector setup for agents.",
+      "url": "https://www.kaicalls.com/skills/kaicalls-agent-signup.skill"
+    }
+  ]
+}

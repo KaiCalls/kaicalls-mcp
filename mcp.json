@@ -1,0 +1,772 @@
+{
+  "name": "KaiCalls",
+  "schema_version": "1.0.0",
+  "serverInfo": {
+    "name": "KaiCalls",
+    "version": "1.0.0",
+    "description": "AI-powered phone answering service for businesses. Handles inbound calls, outbound campaigns, lead intake, appointment scheduling, and after-hours management."
+  },
+  "provider": {
+    "organization": "KaiCalls",
+    "url": "https://www.kaicalls.com",
+    "contact_email": "connor@kaicalls.com"
+  },
+  "endpoints": {
+    "mcp": "https://www.kaicalls.com/api/mcp",
+    "documentation": "https://www.kaicalls.com/docs/api/agent-discovery"
+  },
+  "auth": {
+    "type": "oauth2",
+    "description": "OAuth 2.1 (authorization code + PKCE S256, refresh tokens, DCR). A KaiCalls API key (kc_live_*) is also accepted via Authorization Bearer or X-KaiCalls-API-Key for direct API clients and MCP gateways."
+  },
+  "tools": [
+    {
+      "name": "make_call",
+      "title": "Make Call",
+      "description": "Initiate a real outbound phone call via a KaiCalls AI agent",
+      "scope": "calls:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "call": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "conversation_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "string"
+              },
+              "agent_id": {
+                "type": "string"
+              },
+              "business_id": {
+                "type": "string"
+              },
+              "lead_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "to": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "check_call_status",
+      "title": "Check Call Status",
+      "description": "Check the status of a call by its ID",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "call": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "conversation_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "string"
+              },
+              "duration_seconds": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "agent_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "agent_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "business_id": {
+                "type": "string"
+              },
+              "lead_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "summary": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "recording_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "quality_dimensions": {
+                "type": [
+                  "object",
+                  "array",
+                  "null"
+                ]
+              },
+              "created_at": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_recent_calls",
+      "title": "List Recent Calls",
+      "description": "List recent calls for the authenticated business",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "calls": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_offset": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "filters": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_transcript",
+      "title": "Get Transcript",
+      "description": "Get the transcript and summary of a completed call",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "call": {
+            "type": "object"
+          },
+          "transcript_available": {
+            "type": "boolean"
+          },
+          "transcript": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "transcript_truncated": {
+            "type": "boolean"
+          },
+          "transcript_length": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_agents",
+      "title": "List Agents",
+      "description": "List KaiCalls agents available to the authenticated account",
+      "scope": "agents:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "agents": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_offset": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "filters": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_business_info",
+      "title": "Get Business Info",
+      "description": "Get business information, agent count, and recent call stats",
+      "scope": "agents:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business": {
+            "type": "object"
+          },
+          "agent_count": {
+            "type": "integer"
+          },
+          "calls_last_30_days": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_leads",
+      "title": "List Leads",
+      "description": "List leads for the authenticated business, with optional status/source/agent filters. Includes the latest AI lead score when available.",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "leads": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_offset": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "filters": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_lead",
+      "title": "Get Lead",
+      "description": "Get full details for a single lead by ID, including the latest AI lead score and explanation.",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "lead": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_voicemails",
+      "title": "List Voicemails",
+      "description": "List recent voicemails for the authenticated business, including transcripts and recording URLs.",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "voicemails": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_offset": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_sms_messages",
+      "title": "List SMS Messages",
+      "description": "List recent SMS messages for the authenticated business. Filter by conversation or direction (inbound/outbound).",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_offset": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "filters": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_campaigns",
+      "title": "List Campaigns",
+      "description": "List outbound call campaigns for the authenticated business.",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "campaigns": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_offset": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "filters": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_analytics",
+      "title": "Get Analytics",
+      "description": "Get a dashboard summary (lead counts by status, conversion rate, call volume and duration, top agents) over a recent time window.",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "period": {
+            "type": "object"
+          },
+          "leads": {
+            "type": "object"
+          },
+          "calls": {
+            "type": "object"
+          },
+          "agents": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "request_kaicalls_update",
+      "title": "Request KaiCalls Update",
+      "description": "Ask the KaiCalls on-behalf update broker to perform a scoped, governed mutation. Supported intents: phone.emergency_address.set, transcripts.sink.configure, agent.patch. Mutating requests need an idempotency_key; high-risk changes need human authority. The broker returns needs_user_input, needs_approval, pending_approval, executed, denied, or unsupported — never an unaudited side effect.",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "status": {
+            "type": "string"
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "intent": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "business_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "request_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "risk_level": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "approval": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "missing_fields": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "result": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    }
+  ],
+  "protocol": "MCP",
+  "transports": [
+    "streamable-http"
+  ]
+}
