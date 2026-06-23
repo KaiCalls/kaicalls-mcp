@@ -286,6 +286,85 @@
       }
     },
     {
+      "name": "get_call_recording",
+      "title": "Get Call Recording",
+      "description": "Get the real call recording URL for a call so reviewers can listen to the voice/audio instead of relying only on the transcript.",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "recording_available": {
+            "type": "boolean"
+          },
+          "call": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "conversation_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "string"
+              },
+              "duration_seconds": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "recording_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "agent_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "agent_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "business_id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "list_agents",
       "title": "List Agents",
       "description": "List KaiCalls agents available to the authenticated account",
@@ -377,6 +456,242 @@
         "destructiveHint": false,
         "idempotentHint": true,
         "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_operational_settings",
+      "title": "Get Operational Settings",
+      "description": "Audit the business-level operational setup Claude needs before changing a client account: staff alert recipients, SMS/email alert flags, escalation rules, textable send-link entries, and assigned agent voice/model/greeting metadata.",
+      "scope": "agents:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business": {
+            "type": "object"
+          },
+          "notification_settings": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "business_links": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "agents": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "available_setup_tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "configure_staff_alerts",
+      "title": "Configure Staff Alerts",
+      "description": "Configure business-owned staff alert recipients and post-call escalation rules. Use this for emergency/urgent texts, callback alerts, billing/provider follow-up alerts, and ensuring alerts go only to the correct business staff.",
+      "scope": "agents:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "settings": {
+            "type": "object"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "current_settings": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "proposed_settings": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "configure_textable_links",
+      "title": "Configure Textable Links",
+      "description": "Create or repair the business_links entries used by the send_link/send_sms tools. Use this when callers need booking, directions, cancellation, sister-location, or service-specific links texted without exposing raw URLs in the voice prompt.",
+      "scope": "agents:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "plan": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "configure_agent_business_rules",
+      "title": "Configure Agent Business Rules",
+      "description": "Safely add or replace a named operational rules section inside an agent inbound prompt, then route the prompt patch through the governed agent.patch broker. Use this for cross-business handoffs, callback language, alert promises, and client-specific operating rules without round-tripping the whole prompt manually.",
+      "scope": "agents:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "status": {
+            "type": "string"
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "business_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "agent_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "section_title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rules_count": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "request_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "approval": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "result": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
       }
     },
     {
@@ -676,7 +991,7 @@
     {
       "name": "request_kaicalls_update",
       "title": "Request KaiCalls Update",
-      "description": "Ask the KaiCalls on-behalf update broker to perform a scoped, governed mutation. Supported intents: phone.emergency_address.set, transcripts.sink.configure, agent.patch. Mutating requests need an idempotency_key; high-risk changes need human authority. The broker returns needs_user_input, needs_approval, pending_approval, executed, denied, or unsupported — never an unaudited side effect.",
+      "description": "Ask the KaiCalls on-behalf update broker to perform a scoped, governed mutation. Supported intents: phone.emergency_address.set, transcripts.sink.configure, agent.patch. Prefer configure_agent_business_rules for targeted operational prompt sections, configure_staff_alerts for alert recipients/rules, and configure_textable_links for send-link setup. Mutating requests need an idempotency_key; high-risk changes need human authority. The broker returns needs_user_input, needs_approval, pending_approval, executed, denied, or unsupported — never an unaudited side effect.",
       "outputSchema": {
         "type": "object",
         "properties": {

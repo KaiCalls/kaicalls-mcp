@@ -10,7 +10,8 @@ The KaiCalls MCP server is **hosted** — nothing to install. Point any MCP clie
 3. Connect → sign in with your KaiCalls account → on the consent screen pick the
    **business** to connect → **Allow**.
 4. Try: *"list my KaiCalls agents"*, *"show my recent calls"*, *"get the transcript
-   for the most recent call"*, *"show my analytics"*, *"list my leads"*.
+   for the most recent call"*, *"give me the actual recording URL for that call"*,
+   *"show my analytics"*, *"audit my operational settings"*.
 
 ## ChatGPT
 
@@ -36,14 +37,24 @@ Add a remote (Streamable HTTP) MCP server:
 
 ## Verifying the connection
 
-A successful connect lists 13 tools. Good first calls (all read-only):
+A successful connect lists 18 tools. Good first calls (all read-only):
 
 - `list_agents` — confirms the account + business scope
 - `get_business_info` — business profile + recent call stats
+- `get_operational_settings` — staff alerts, escalation rules, textable links, and agent voice/model metadata
+- `get_call_recording` — real audio URL when the question is about how the call sounded
 - `get_analytics` — dashboard summary
 
 To exercise a write path safely, `make_call` places a **real** outbound call — test
-only with a phone number you control.
+only with a phone number you control. Operational setup writes should be dry-run
+first:
+
+- `configure_staff_alerts` with `dry_run: true` — validate staff SMS/email recipients and escalation rules.
+- `configure_textable_links` with `dry_run: true` — validate booking, directions, cancellation, or sister-location links.
+- `configure_agent_business_rules` with `dry_run: true` — validate callback, emergency, and handoff rules before changing the live prompt.
+
+Prompt changes require an `idempotency_key` plus human-grade `authority`, or
+`queue_for_approval: true`.
 
 ## Troubleshooting
 

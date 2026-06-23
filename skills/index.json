@@ -5,7 +5,7 @@
     {
       "name": "kaicalls-mcp",
       "type": "mcp",
-      "description": "Connect to KaiCalls via MCP to make calls, check statuses, and retrieve transcripts.",
+      "description": "Connect to KaiCalls via MCP to make calls, check statuses, retrieve transcripts/recordings, and configure operational setup.",
       "url": "https://www.kaicalls.com/.well-known/mcp/server-card.json"
     },
     {

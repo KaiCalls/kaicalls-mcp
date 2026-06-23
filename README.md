@@ -17,7 +17,7 @@ connect to the live endpoint below with your KaiCalls account.
 | **MCP endpoint** | `https://www.kaicalls.com/api/mcp` |
 | **Transport** | Streamable HTTP (JSON-RPC over HTTP POST) |
 | **Auth** | OAuth 2.1 (PKCE S256 + DCR) **or** `kc_live_` API key as Bearer |
-| **Tools** | 13 (11 read-only, 2 write) |
+| **Tools** | 18 (13 read-only, 5 write/setup) |
 | **Provider** | [KaiCalls](https://www.kaicalls.com) · connor@kaicalls.com |
 | **Status** | GA — live in production |
 
@@ -44,7 +44,7 @@ dashboard under **Settings → API Keys**. See [`docs/authentication.md`](docs/a
 
 ## Tools
 
-11 read-only tools and 2 write tools. Full input/output schemas and safety
+13 read-only tools and 5 write/setup tools. Full input/output schemas and safety
 annotations are in [`docs/tools.md`](docs/tools.md); the machine-readable inventory
 is in [`mcp.json`](mcp.json) and [`server-card.json`](server-card.json).
 
@@ -55,6 +55,8 @@ is in [`mcp.json`](mcp.json) and [`server-card.json`](server-card.json).
 | `list_recent_calls` | `calls:read` | ✅ | Recent calls for the business |
 | `check_call_status` | `calls:read` | ✅ | Status of a call by ID |
 | `get_transcript` | `calls:read` | ✅ | Transcript + summary of a completed call |
+| `get_call_recording` | `calls:read` | ✅ | Recording URL for listening to the actual call audio |
+| `get_operational_settings` | `agents:read` | ✅ | Audit staff alerts, escalation rules, textable links, and agent voice/model/greeting metadata |
 | `list_leads` | `calls:read` | ✅ | Leads with latest AI lead score |
 | `get_lead` | `calls:read` | ✅ | Full detail for one lead (score + explanation) |
 | `list_voicemails` | `calls:read` | ✅ | Voicemails with transcripts + recording URLs |
@@ -62,13 +64,16 @@ is in [`mcp.json`](mcp.json) and [`server-card.json`](server-card.json).
 | `list_campaigns` | `calls:read` | ✅ | Outbound call campaigns |
 | `get_analytics` | `calls:read` | ✅ | Dashboard summary (leads, conversion, call volume, top agents) |
 | `make_call` | `calls:write` | ❌ | Place a **real** outbound call via a KaiCalls agent |
-| `request_kaicalls_update` | `numbers:write` · `webhooks:write` · `agents:write` | ❌ | Governed on-behalf update broker (E911 address, transcript sink, agent patch) |
+| `configure_staff_alerts` | `agents:write` | ❌ | Configure staff SMS/email alert recipients and post-call escalation rules |
+| `configure_textable_links` | `agents:write` | ❌ | Create or repair send-link entries used by voice/SMS tools |
+| `configure_agent_business_rules` | `agents:write` | ❌ | Patch a named operational rules section into an agent prompt through the governed broker |
+| `request_kaicalls_update` | intent-specific write scope | ❌ | Governed on-behalf update broker (E911 address, transcript sink, full agent patch) |
 
 > **Write-tool safety.** `make_call` dials a real phone over the public network and
-> consumes metered minutes (destructive, open-world). `request_kaicalls_update` is a
-> governed broker: mutations require an idempotency key, high-risk changes require
-> human authority, and every outcome is audited — it never produces an unaudited
-> side effect. Both carry `destructiveHint: true` annotations.
+> consumes metered minutes (destructive, open-world). Operational setup tools mutate
+> live business configuration and carry `destructiveHint: true`; prompt changes route
+> through the governed broker, require an idempotency key plus human authority or a
+> queued approval, and every outcome is audited.
 
 ---
 

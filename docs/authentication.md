@@ -38,10 +38,12 @@ KaiCalls dashboard under **Settings → API Keys**.
 
 | Scope | Grants |
 |-------|--------|
-| `agents:read` | `list_agents`, `get_business_info` |
-| `calls:read` | call/lead/voicemail/SMS/campaign reads + `get_analytics` |
+| `agents:read` | `list_agents`, `get_business_info`, `get_operational_settings` |
+| `calls:read` | call/lead/voicemail/SMS/campaign reads, `get_call_recording`, `get_analytics` |
 | `calls:write` | `make_call` |
-| `numbers:write`, `webhooks:write`, `agents:write` | `request_kaicalls_update` (intent-dependent) |
+| `agents:write` | operational setup tools (`configure_staff_alerts`, `configure_textable_links`, `configure_agent_business_rules`) and `request_kaicalls_update` agent intents |
+| `numbers:write`, `webhooks:write` | `request_kaicalls_update` for E911 and transcript webhook intents |
 
 A key only ever sees data for the business it is scoped to. Reads are bounded to that
-tenant (closed-world); the two write tools are the only ones with external effects.
+tenant (closed-world). Write/setup tools mutate live account configuration or place
+real calls, so grant write scopes only to trusted clients.
