@@ -40,6 +40,27 @@ Authorization: Bearer kc_live_xxxxxxxxxxxxxxxxxxxx
 (`X-KaiCalls-API-Key: kc_live_...` is also accepted.) Generate keys in the KaiCalls
 dashboard under **Settings → API Keys**. See [`docs/authentication.md`](docs/authentication.md).
 
+### Cline / remote MCP clients
+KaiCalls is a remote server — there is nothing to clone or install. Add it to your
+MCP client config as a Streamable HTTP server and authenticate with a `kc_live_` key.
+For Cline, edit `cline_mcp_settings.json` (or use the **Remote Servers** tab) and add:
+
+```json
+{
+  "kaicalls": {
+    "url": "https://www.kaicalls.com/api/mcp",
+    "type": "streamableHttp",
+    "headers": { "Authorization": "Bearer kc_live_YOUR_KEY" }
+  }
+}
+```
+
+Replace `kc_live_YOUR_KEY` with a key from the KaiCalls dashboard under **Settings →
+API Keys**. The transport type must be the camelCase string `streamableHttp` — using
+`streamable-http` or omitting it makes Cline fall back to SSE and the connection fails
+with a `405`. Once saved, Cline lists the KaiCalls tools and is ready to use. See
+[`llms-install.md`](llms-install.md) for the full agent-driven setup walkthrough.
+
 ---
 
 ## Tools
