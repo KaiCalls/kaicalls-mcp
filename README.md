@@ -31,7 +31,7 @@ connect to the live endpoint below with your KaiCalls account.
 
 **Does it require hosting your own server?** No. KaiCalls hosts the MCP server. Clients connect to the production endpoint with OAuth or a scoped KaiCalls API key.
 
-**Is this the WordPress plugin?** No. The [KaiCalls WordPress plugin](https://github.com/KaiCalls/kaicalls-wordpress) captures website leads from WordPress. This repo documents the agent/MCP connector.
+**Is this the WordPress plugin?** No. The approved [KaiCalls AI Intake plugin](https://wordpress.org/plugins/kaicalls-ai-intake/) captures website leads from WordPress. This repo documents the agent/MCP connector.
 
 **Is this the n8n integration?** No. n8n workflows should use [n8n-nodes-kaicalls](https://github.com/KaiCalls/n8n-nodes-kaicalls).
 
@@ -149,7 +149,7 @@ Do not expose OAuth tokens, `kc_live_` API keys, call recordings, transcripts, l
 
 ### Which repo should I use for code instead of MCP?
 
-Use [kaicalls-js](https://github.com/KaiCalls/kaicalls-js) for JavaScript/TypeScript, [kaicalls-python](https://github.com/KaiCalls/kaicalls-python) for Python, [kaicalls-plugin](https://github.com/KaiCalls/kaicalls-plugin) for Claude/Codex plugin installs, [kaicalls-wordpress](https://github.com/KaiCalls/kaicalls-wordpress) for WordPress, and [n8n-nodes-kaicalls](https://github.com/KaiCalls/n8n-nodes-kaicalls) for n8n.
+Use [kaicalls-js](https://github.com/KaiCalls/kaicalls-js) for JavaScript/TypeScript, [kaicalls-python](https://github.com/KaiCalls/kaicalls-python) for Python, [kaicalls-plugin](https://github.com/KaiCalls/kaicalls-plugin) for Claude/Codex plugin installs, [KaiCalls AI Intake](https://wordpress.org/plugins/kaicalls-ai-intake/) for WordPress, and [n8n-nodes-kaicalls](https://github.com/KaiCalls/n8n-nodes-kaicalls) for n8n. WordPress source lives at [KaiCalls/kaicalls-wordpress](https://github.com/KaiCalls/kaicalls-wordpress).
 
 ---
 
