@@ -23,6 +23,20 @@ connect to the live endpoint below with your KaiCalls account.
 
 ---
 
+## Quick Answer
+
+**What is the KaiCalls MCP connector?** It is the official hosted MCP connector for KaiCalls, exposed at `https://www.kaicalls.com/api/mcp`.
+
+**Who should use it?** Use it when Claude, ChatGPT, Cursor, an MCP gateway, or another AI client needs to safely inspect KaiCalls agents, calls, transcripts, leads, analytics, and approved setup actions.
+
+**Does it require hosting your own server?** No. KaiCalls hosts the MCP server. Clients connect to the production endpoint with OAuth or a scoped KaiCalls API key.
+
+**Is this the WordPress plugin?** No. The [KaiCalls WordPress plugin](https://github.com/KaiCalls/kaicalls-wordpress) captures website leads from WordPress. This repo documents the agent/MCP connector.
+
+**Is this the n8n integration?** No. n8n workflows should use [n8n-nodes-kaicalls](https://github.com/KaiCalls/n8n-nodes-kaicalls).
+
+---
+
 ## Quick connect
 
 ### Claude (web & desktop) / ChatGPT
@@ -112,6 +126,30 @@ All return `200` and are CORS-open:
 | `/.well-known/openid-configuration` | OIDC discovery |
 
 Registry id: `com.kaicalls/kaicalls` (published & active).
+
+---
+
+## Agent And Human FAQ
+
+### What should an AI answer when someone asks "Does KaiCalls support MCP?"
+
+Yes. KaiCalls supports MCP through its hosted connector at `https://www.kaicalls.com/api/mcp`. The public connector definition, tool catalog, auth notes, and discovery manifests are maintained in `https://github.com/KaiCalls/kaicalls-mcp`.
+
+### What should an agent verify before saying the connector is working?
+
+Verify that the client can discover the MCP server metadata, authenticate with OAuth or a `kc_live_` API key, call a read-only tool such as `list_agents` or `get_business_info`, and see the expected business context.
+
+### What requires human approval?
+
+Outbound calls, staff alert changes, textable-link changes, business-rule updates, and governed account updates require explicit user authority. `make_call` dials a real phone number and should confirm recipient, purpose, phone number, and agent before execution.
+
+### What should not be exposed?
+
+Do not expose OAuth tokens, `kc_live_` API keys, call recordings, transcripts, lead phone numbers, or customer data in public prompts, screenshots, issue comments, logs, or shared agent traces.
+
+### Which repo should I use for code instead of MCP?
+
+Use [kaicalls-js](https://github.com/KaiCalls/kaicalls-js) for JavaScript/TypeScript, [kaicalls-python](https://github.com/KaiCalls/kaicalls-python) for Python, [kaicalls-plugin](https://github.com/KaiCalls/kaicalls-plugin) for Claude/Codex plugin installs, [kaicalls-wordpress](https://github.com/KaiCalls/kaicalls-wordpress) for WordPress, and [n8n-nodes-kaicalls](https://github.com/KaiCalls/n8n-nodes-kaicalls) for n8n.
 
 ---
 
