@@ -13,18 +13,185 @@
   },
   "endpoints": {
     "mcp": "https://www.kaicalls.com/api/mcp",
+    "acquisition": "https://www.kaicalls.com/api/mcp/acquisition",
     "documentation": "https://www.kaicalls.com/docs/api/agent-discovery"
   },
   "auth": {
     "type": "oauth2",
     "description": "OAuth 2.1 (authorization code + PKCE S256, refresh tokens, DCR). A KaiCalls API key (kc_live_*) is also accepted via Authorization Bearer or X-KaiCalls-API-Key for direct API clients and MCP gateways."
   },
+  "surfaces": [
+    {
+      "name": "account",
+      "url": "https://www.kaicalls.com/api/mcp",
+      "audience": "Existing KaiCalls accounts.",
+      "description": "The full operator inventory — calls, leads, voicemail, SMS, campaigns, analytics, agent config, evals, config history and billing for a business the caller already belongs to.",
+      "tools": [
+        "retry_setup",
+        "get_setup_recovery_status",
+        "make_call",
+        "check_call_status",
+        "list_recent_calls",
+        "get_transcript",
+        "get_call_recording",
+        "list_agents",
+        "get_business_info",
+        "get_operational_settings",
+        "configure_staff_alerts",
+        "get_activation_status",
+        "confirm_notification_destination",
+        "retry_activation_notification",
+        "choose_customer_route",
+        "configure_textable_links",
+        "configure_agent_business_rules",
+        "list_leads",
+        "get_lead",
+        "list_voicemails",
+        "list_sms_messages",
+        "list_campaigns",
+        "create_campaign",
+        "list_workflow_templates",
+        "get_analytics",
+        "upsert_lead",
+        "send_sms",
+        "update_agent_config",
+        "request_kaicalls_update",
+        "get_usage",
+        "get_balance",
+        "list_numbers",
+        "get_phone_flow",
+        "update_phone_flow",
+        "set_up_phone_system",
+        "get_phone_system_status",
+        "add_team_phone",
+        "list_conversations",
+        "get_conversation",
+        "get_webhook",
+        "set_webhook",
+        "delete_webhook",
+        "list_evals",
+        "run_eval",
+        "list_voices",
+        "create_agent",
+        "attach_number",
+        "set_owner_phone",
+        "detach_number",
+        "search_available_numbers",
+        "buy_number",
+        "list_knowledge",
+        "upsert_knowledge",
+        "list_products",
+        "upsert_product",
+        "list_config_versions",
+        "get_change_history",
+        "rollback_config",
+        "list_observability_events",
+        "list_tool_execution_logs",
+        "list_subscription_history",
+        "list_overage_charges",
+        "list_rightsize_recommendations",
+        "report_issue"
+      ]
+    },
+    {
+      "name": "acquisition",
+      "url": "https://www.kaicalls.com/api/mcp/acquisition",
+      "audience": "First-time buyers who do not have an account yet.",
+      "description": "A strict subset of the account surface: only the tools that take someone from \"I keep missing calls\" to a working business number that answers. Prefer this endpoint when helping someone set up a new phone line — it is the same authority, narrowed to the setup job, so a routing model is not choosing one tool out of fifty-one.",
+      "tools": [
+        "retry_setup",
+        "get_setup_recovery_status",
+        "make_call",
+        "list_agents",
+        "get_business_info",
+        "configure_staff_alerts",
+        "get_activation_status",
+        "confirm_notification_destination",
+        "retry_activation_notification",
+        "choose_customer_route",
+        "list_numbers",
+        "set_up_phone_system",
+        "get_phone_system_status",
+        "list_voices",
+        "create_agent",
+        "attach_number",
+        "set_owner_phone",
+        "search_available_numbers",
+        "buy_number"
+      ],
+      "job": [
+        {
+          "step": "understand_business",
+          "intent": "Read back what this business is and what it already has set up."
+        },
+        {
+          "step": "choose_voice",
+          "intent": "Hear and pick the voice that answers the phone."
+        },
+        {
+          "step": "create_secretary",
+          "intent": "Create the secretary that will answer calls."
+        },
+        {
+          "step": "find_number",
+          "intent": "Find a phone number in the right area code."
+        },
+        {
+          "step": "buy_number",
+          "intent": "Buy that number (spend is confirmed by a human, never assumed)."
+        },
+        {
+          "step": "connect_number",
+          "intent": "Route the number to the secretary."
+        },
+        {
+          "step": "collect_owner_phone",
+          "intent": "Get the owner's own mobile number so Kai can ring it first and confirm forwarding."
+        },
+        {
+          "step": "set_up_phone_system",
+          "intent": "Turn the number into a hosted phone system: the team rings first, Kai answers as an extension, and the office line forwards in."
+        },
+        {
+          "step": "confirm_live",
+          "intent": "Report the working number back and what happens next."
+        }
+      ]
+    }
+  ],
   "tools": [
+    {
+      "name": "retry_setup",
+      "title": "Reconcile Existing Setup",
+      "description": "Reconcile database pointers for an existing imported signup phone reservation. Owner-only, entitlement-checked, single-flight and idempotent. Never creates agents, buys numbers, changes provider routing or sends messages. PBX, missing imports, and stale claims return review blockers. Reuse the same key to read/replay the outcome; a failed request requires review before a new key. Ready means database agreement, not activation.",
+      "scope": "numbers:write",
+      "acquisitionStep": "confirm_live",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_setup_recovery_status",
+      "title": "Get Setup Recovery Status",
+      "description": "Read an owner-authorized setup recovery request by its business and idempotency key. Running requests are never automatically stolen, including stale requests. A ready receipt does not prove live activation.",
+      "scope": "numbers:read",
+      "acquisitionStep": "confirm_live",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
     {
       "name": "make_call",
       "title": "Make Call",
-      "description": "Initiate a real outbound phone call via a KaiCalls AI agent",
+      "description": "Initiate an outbound voice preview via a KaiCalls AI agent. This lets the owner hear Kai, but it is preview only and never proves inbound routing or advances activation. Pass an idempotency_key to make the request safely retryable.",
       "scope": "calls:write",
+      "acquisitionStep": "confirm_live",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -35,6 +202,21 @@
           "error": {
             "type": "string",
             "description": "Present when success is false"
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "intent_id": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "preview_only": {
+            "type": "boolean"
+          },
+          "counts_toward_activation": {
+            "type": "boolean"
           },
           "call": {
             "type": "object",
@@ -364,8 +546,9 @@
     {
       "name": "list_agents",
       "title": "List Agents",
-      "description": "List KaiCalls agents available to the authenticated account",
+      "description": "List the KaiCalls agents on the authenticated account. Use this before setting anything up, to see whether this business already has a secretary answering its calls.",
       "scope": "agents:read",
+      "acquisitionStep": "understand_business",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -420,8 +603,9 @@
     {
       "name": "get_business_info",
       "title": "Get Business Info",
-      "description": "Get business information, agent count, and recent call stats",
+      "description": "Read back what a business already has: profile details, how many agents are configured, and recent call volume. Start here when someone wants a business number that answers missed calls, so nothing is created twice.",
       "scope": "agents:read",
+      "acquisitionStep": "understand_business",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -458,7 +642,7 @@
     {
       "name": "get_operational_settings",
       "title": "Get Operational Settings",
-      "description": "Audit the business-level operational setup Claude needs before changing a client account: staff alert recipients, SMS/email alert flags, escalation rules, textable send-link entries, and assigned agent voice/model/greeting metadata.",
+      "description": "Audit the business-level operational setup required before changing a live account: staff alert recipients, SMS/email alert flags, escalation rules, textable send-link entries, and assigned agent voice/model/greeting metadata.",
       "scope": "agents:read",
       "outputSchema": {
         "type": "object",
@@ -514,8 +698,9 @@
     {
       "name": "configure_staff_alerts",
       "title": "Configure Staff Alerts",
-      "description": "Configure business-owned staff alert recipients and post-call escalation rules. Use this for emergency/urgent texts, callback alerts, billing/provider follow-up alerts, and ensuring alerts go only to the correct business staff.",
+      "description": "Save business-owned staff alert recipients and post-call escalation rules. Saving settings does not prove provider delivery or owner receipt; activation notification proof is tracked separately.",
       "scope": "agents:write",
+      "acquisitionStep": "confirm_live",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -544,6 +729,241 @@
           },
           "proposed_settings": {
             "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_activation_status",
+      "title": "Get Activation Status",
+      "description": "Read the persisted proof-first activation status for one accessible business. Returns masked evidence, the exact next action, and whether the command center/full MCP surface is unlocked. It cannot assert or advance proof. A number is not fully set up until the owner's own phone is on file (see owner_phone_on_file) and forwarding is verified — do not report the line as live/working on the strength of proof state alone.",
+      "scope": "agents:read",
+      "acquisitionStep": "confirm_live",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "activation_session_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "next_action": {
+            "type": "string"
+          },
+          "command_center_unlocked": {
+            "type": "boolean"
+          },
+          "owner_phone_on_file": {
+            "type": "boolean",
+            "description": "Whether the owner's own mobile number is on file. False means no SMS nudge, ring-first, or forwarding verification can reach a human — the line is not fully set up regardless of proof state."
+          },
+          "proof": {
+            "type": "object"
+          },
+          "notification_attempts": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "routes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "activation_receipt": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "confirm_notification_destination",
+      "title": "Confirm Activation Notification Destination",
+      "description": "APPROVAL-GATED. Save the owner-approved SMS or email destination for the exact active activation session. Delivery starts only when the inbound call artifact is ready, and settings alone never count as delivery proof.",
+      "scope": "agents:write",
+      "acquisitionStep": "confirm_live",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "status": {
+            "type": "string"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "activation_session_id": {
+            "type": "string"
+          },
+          "destination_masked": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "delivery_started": {
+            "type": "boolean"
+          },
+          "attempt": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "retry_activation_notification",
+      "title": "Retry Activation Notification",
+      "description": "APPROVAL-GATED. Retry only the current terminal or time-eligible activation notification channel for the exact active session. Requires a new idempotency key; ambiguous provider outcomes are never blindly resent.",
+      "scope": "agents:write",
+      "acquisitionStep": "confirm_live",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "status": {
+            "type": "string"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "activation_session_id": {
+            "type": "string"
+          },
+          "attempt": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "choose_customer_route",
+      "title": "Choose Customer Route",
+      "description": "APPROVAL-GATED. After setup proof is complete, save forwarding, published_number, both, or testing. This unlocks the command center but does not claim customer coverage; selected live routes remain pending until independently verified. A number is not fully set up until the owner's own phone is on file (see get_activation_status / set_owner_phone) and forwarding is verified.",
+      "scope": "numbers:write",
+      "acquisitionStep": "confirm_live",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "status": {
+            "type": "string"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "activation_session_id": {
+            "type": "string"
+          },
+          "deployment_choice": {
+            "type": "string"
+          },
+          "command_center_unlocked": {
+            "type": "boolean"
+          },
+          "customer_coverage_active": {
+            "type": "boolean"
+          },
+          "routes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "instructions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -945,9 +1365,109 @@
       }
     },
     {
+      "name": "create_campaign",
+      "title": "Create Campaign",
+      "description": "Create an outbound call campaign (cadence + lead batch) and optionally launch it immediately. Launching queues calls for the orchestrator; existing TCPA/consent gating still applies at dial time. Requires admin role on the business.",
+      "scope": "calls:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "campaign": {
+            "type": "object"
+          },
+          "launched": {
+            "type": "boolean"
+          },
+          "sequence_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "queued": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "total_leads": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "list_workflow_templates",
+      "title": "List Workflow Templates",
+      "description": "List the cadence/campaign workflow templates KaiCalls can run (standard, aggressive, nurture, custom), including each template's retry interval, defaults (call windows, days, attempts), and a ready-to-use cadence_config example. Call this before create_campaign so an external agent can trigger a multi-step sequence with launch=true instead of guessing the cadence_config shape blind. Static catalog — no per-business state.",
+      "scope": "calls:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "cadence_config_fields": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "defaults": {
+            "type": "object"
+          },
+          "usage": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "get_analytics",
       "title": "Get Analytics",
-      "description": "Get a dashboard summary (lead counts by status, conversion rate, call volume and duration, top agents) over a recent time window.",
+      "description": "Get a dashboard summary (lead counts by status, conversion rate, call volume and duration, top agents, and business outcomes by type) over a recent time window.",
       "scope": "calls:read",
       "outputSchema": {
         "type": "object",
@@ -971,6 +1491,12 @@
           },
           "agents": {
             "type": "object"
+          },
+          "outcomes": {
+            "type": "object"
+          },
+          "outcomes_total": {
+            "type": "integer"
           }
         },
         "required": [
@@ -986,9 +1512,202 @@
       }
     },
     {
+      "name": "upsert_lead",
+      "title": "Create or Update Lead",
+      "description": "Create a new lead or update existing leads for the authenticated business, routed through the governed leads API (business access-checked, usage-logged, and audited). To create one, pass `lead` with at least one of name/phone/email plus optional status/source/notes/agent_id/etc. To update, pass `updates`: an array of { id, ...fields } for one or many existing leads (status, name, phone, email, notes, address, city, state, zip). Updates are access-checked per row and report partial success.",
+      "scope": "leads:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "operation": {
+            "type": "string",
+            "description": "create or update"
+          },
+          "lead": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "updated": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "failed": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "results": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "send_sms",
+      "title": "Send SMS",
+      "description": "Send an outbound text message from one of your agents' phone lines to a recipient, routed through the governed messaging API. Compliance gates (opt-out / Do-Not-Call / quiet-hours), rate limits, and message logging all apply. Provide from_agent_id (the sending agent), to (recipient phone in E.164), and message. Optionally link lead_id to attribute the text and respect that lead's automation-pause state.",
+      "scope": "sms:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "message_sid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "to": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "from": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "update_agent_config",
+      "title": "Update Agent Configuration",
+      "description": "Edit an agent's live runtime configuration — greeting/first message, inbound or SMS prompt, voice, language model, max call duration, and call-transfer settings — routed through the governed update broker so every change keeps the consent + audit trail (a versioned config snapshot and change history). Every write here is reversible: inspect what changed with get_change_history or list_config_versions, then undo it with rollback_config. Mutating changes need an idempotency_key; high-impact live changes need human authority (an authority envelope) or queue_for_approval for dashboard sign-off. For just a single named operational-rules section, prefer configure_agent_business_rules.",
+      "scope": "agents:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "status": {
+            "type": "string"
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "business_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "agent_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "request_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "risk_level": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "approval": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "result": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
       "name": "request_kaicalls_update",
       "title": "Request KaiCalls Update",
-      "description": "Ask the KaiCalls on-behalf update broker to perform a scoped, governed mutation. Supported intents: phone.emergency_address.set, transcripts.sink.configure, agent.patch. Prefer configure_agent_business_rules for targeted operational prompt sections, configure_staff_alerts for alert recipients/rules, and configure_textable_links for send-link setup. Mutating requests need an idempotency_key; high-risk changes need human authority. The broker returns needs_user_input, needs_approval, pending_approval, executed, denied, or unsupported — never an unaudited side effect.",
+      "description": "Ask the KaiCalls on-behalf update broker to perform a scoped, governed mutation. Supported intents: phone.emergency_address.set, transcripts.sink.configure, agent.patch, numbers.purchase, agent.config.rollback. Prefer update_agent_config for prompt/voice/model edits, configure_agent_business_rules for a single named operational prompt section, upsert_lead for lead create/update, send_sms for outbound texts, configure_staff_alerts for alert recipients/rules, and configure_textable_links for send-link setup. Mutating requests need an idempotency_key; high-risk changes need human authority. The broker returns needs_user_input, needs_approval, pending_approval, executed, denied, or unsupported — never an unaudited side effect.",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -1077,6 +1796,1610 @@
         "destructiveHint": true,
         "idempotentHint": true,
         "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_usage",
+      "title": "Get API Usage",
+      "description": "List recent API usage events (endpoint, method, status code, cost) for the caller's account. Mirrors GET /api/v1/usage.",
+      "scope": "events:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "usage": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_balance",
+      "title": "Get Balance",
+      "description": "Get per-business minutes-used and subscription status across every business the caller can access. Mirrors GET /api/v1/balance.",
+      "scope": "billing:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "businesses": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_numbers",
+      "title": "List Phone Numbers",
+      "description": "List phone numbers assigned to the accessible business(es), with capability and compliance flags. Assignment does not prove inbound routing, activation, or customer coverage — and a number is not fully set up until the owner's own phone is on file (see get_activation_status / set_owner_phone) and forwarding is verified. Mirrors GET /api/v1/numbers.",
+      "scope": "numbers:read",
+      "acquisitionStep": "confirm_live",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "numbers": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_phone_flow",
+      "title": "Get Phone Flow",
+      "description": "Read how calls ring on the business's hosted phone system: which cells and desk phones ring, for how many seconds, and whether after-hours callers go straight to the AI receptionist. Reconciled from the phone system on every call. Mirrors POST /api/v1/phone-system action=get_flow. Returns 409 when the hosted phone system is not set up for this business.",
+      "scope": "numbers:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "flow": {
+            "type": "object"
+          },
+          "readback": {
+            "type": "string",
+            "description": "One-sentence plain-English description."
+          },
+          "line": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kai_extension": {
+            "type": "string"
+          },
+          "business_hours_available": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "update_phone_flow",
+      "title": "Update Phone Flow",
+      "description": "Replace how calls ring on the business's hosted phone system with a full phone flow: { version: 1, hours: { mode: 'always' | 'business_hours', afterHours: 'kai' }, ring: { members: [{ kind: 'cell', phone: E.164, label, requirePressOne } | { kind: 'desk_phone' | 'user', userId, label }], timeoutSeconds: 5-120 }, overflow: 'kai' }. Applied idempotently (only real differences are written); every member passes the forwarding-loop guard; business_hours mode derives the schedule from the business hours already on file. Read the current flow with get_phone_flow first and send it back with your edits. Mirrors POST /api/v1/phone-system action=save_flow.",
+      "scope": "numbers:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "flow": {
+            "type": "object"
+          },
+          "readback": {
+            "type": "string"
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "set_up_phone_system",
+      "title": "Set Up Phone System",
+      "description": "Turn the business's number into a hosted phone system: Kai is installed as extension 700, the owner's mobile joins a team ring group, and a dial plan rings the team first and hands the call to Kai when nobody picks up. Idempotent and resumable — a re-run reuses everything already created and reports it under `reused`. Needs a complete US street address on file (the emergency-services and tax location) and the owner's mobile: when either is missing the tool fails with `code` missing_address or missing_owner_mobile plus `required_field` and `next_action` saying exactly what to collect — pass it back as business_address or owner_mobile. Returns the status shape (extension, ring group, dial plan ids, the phone-system line) and `next_step`, the one line to relay to the owner (forward your line here / dial 700 from any office phone). Mirrors POST /api/v1/phone-system action=provision.",
+      "scope": "numbers:write",
+      "acquisitionStep": "set_up_phone_system",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "provisioned": {
+            "type": "boolean"
+          },
+          "kai_extension": {
+            "type": "string"
+          },
+          "ids": {
+            "type": "object"
+          },
+          "line": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The phone-system line (E.164), if a number is attached."
+          },
+          "created": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reused": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "next_step": {
+            "type": "string",
+            "description": "The one line to relay to the owner."
+          },
+          "code": {
+            "type": "string",
+            "description": "Present when success is false."
+          },
+          "required_field": {
+            "type": "string",
+            "enum": [
+              "business_address",
+              "owner_mobile"
+            ],
+            "description": "Present when setup is blocked on a missing input."
+          },
+          "next_action": {
+            "type": "string",
+            "description": "What to collect and how to retry, when blocked."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_phone_system_status",
+      "title": "Get Phone System Status",
+      "description": "Read whether the business's hosted phone system is set up: Kai's extension, the team ring group and dial plan ids (never secrets), the phone-system line, and `next_step` — the one line to relay to the owner. Use it to confirm a set_up_phone_system run or before adding team phones. Mirrors GET /api/v1/phone-system.",
+      "scope": "numbers:read",
+      "acquisitionStep": "confirm_live",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "provisioned": {
+            "type": "boolean"
+          },
+          "provisioned_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kai_extension": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ids": {
+            "type": "object"
+          },
+          "line": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "next_step": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "add_team_phone",
+      "title": "Add Team Phone",
+      "description": "Add a teammate's (or the owner's) cell to the phone system's team ring group so it rings before Kai answers. Idempotent — a cell already in the group reports ring_group already_member. Owners and admins are also registered on the admin roster, so calling the business line from that cell reaches the admin secretary; a member only rings. The business's own forwarded-from office line is refused (forwarding_loop) because ringing it would bounce the call straight back. Requires the phone system to be set up first (set_up_phone_system). Mirrors POST /api/v1/phone-system action=add_ring_group_member.",
+      "scope": "numbers:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "member": {
+            "type": "object",
+            "properties": {
+              "phone_number": {
+                "type": "string"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "role": {
+                "type": "string"
+              },
+              "ring_group": {
+                "type": "string",
+                "enum": [
+                  "added",
+                  "already_member"
+                ]
+              },
+              "admin_roster": {
+                "type": "string",
+                "enum": [
+                  "registered",
+                  "skipped_member_role",
+                  "failed"
+                ]
+              }
+            }
+          },
+          "code": {
+            "type": "string",
+            "description": "Present when success is false."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "list_conversations",
+      "title": "List SMS Conversations",
+      "description": "List SMS conversation threads (counterparty timeline metadata) for the authenticated business, most recent first. Mirrors GET /api/v1/sms/conversations.",
+      "scope": "sms:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "conversations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_conversation",
+      "title": "Get SMS Conversation",
+      "description": "Get a single SMS conversation thread by ID. Mirrors GET /api/v1/sms/conversations?id=.",
+      "scope": "sms:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "conversation": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_webhook",
+      "title": "Get Webhook Configuration",
+      "description": "List the configured outbound webhook(s) for a business, including supported event types. Mirrors GET /api/v1/webhooks.",
+      "scope": "webhooks:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "webhooks": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "set_webhook",
+      "title": "Set Webhook",
+      "description": "Create or update a business outbound webhook (URL + subscribed events). Returns a webhook secret on first creation only. Mirrors POST /api/v1/webhooks.",
+      "scope": "webhooks:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "webhook": {
+            "type": "object"
+          },
+          "webhook_secret": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "delete_webhook",
+      "title": "Delete Webhook",
+      "description": "Remove a business outbound webhook by ID. Mirrors DELETE /api/v1/webhooks.",
+      "scope": "webhooks:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_evals",
+      "title": "List Agent Evals",
+      "description": "List canned mock-conversation eval scenarios for an agent (or all accessible agents). Mirrors GET /api/v1/evals.",
+      "scope": "evals:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "evals": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "run_eval",
+      "title": "Run Agent Eval",
+      "description": "Run a single eval scenario (eval_id) or every scenario for an agent (agent_id) against its live Vapi assistant and grade the result. Bills Vapi compute. Mirrors POST /api/v1/evals/run.",
+      "scope": "evals:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "run_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "vapi_run_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "passed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "results": {
+            "type": [
+              "array",
+              "object",
+              "null"
+            ]
+          },
+          "total": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "completed": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "failed": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "list_voices",
+      "title": "List Voice Catalog",
+      "description": "List the curated, credential-free voice catalog (id, display name, accent, language, gender, sample URL) used to configure agent voices. Mirrors GET /api/v1/voices.",
+      "scope": "agents:read",
+      "acquisitionStep": "choose_voice",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "voices": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "create_agent",
+      "title": "Create Agent",
+      "description": "Create a new KaiCalls agent — the secretary that answers this business’s calls (Vapi assistant + KaiCalls records) — with a system prompt, greeting, voice, and model. Mirrors POST /api/v1/agents. Every subsequent mutation to this agent is versioned (assistant_config_versions) and reversible via rollback_config — inspect history with get_change_history / list_config_versions. Compliance: KaiCalls automatically applies state-aware AI-disclosure and consent handling to every agent it provisions, and flags high-risk business categories for extra review.",
+      "scope": "agents:write",
+      "acquisitionStep": "create_secretary",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "agent": {
+            "type": "object"
+          },
+          "compliance": {
+            "type": "object",
+            "properties": {
+              "high_risk_category": {
+                "type": "boolean"
+              },
+              "disclosure_note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "attach_number",
+      "title": "Attach Phone Number",
+      "description": "Assign a phone number already in the KaiCalls registry pool to a business (and optionally route it directly to an agent). Does NOT purchase a new number — use search_available_numbers + buy_number for that. Mirrors POST /api/v1/phone-numbers.",
+      "scope": "numbers:write",
+      "acquisitionStep": "connect_number",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "set_owner_phone",
+      "title": "Set Owner Phone",
+      "description": "Save the owner's own mobile number on the business record so Kai can ring it first and so activation/forwarding follow-ups can reach a human. A number is not fully set up until this is on file and forwarding is verified — connecting the number alone does not prove the owner can be reached. US numbers only; the number is normalized to E.164 and rejected if it cannot be validated as a US mobile/landline number. When ring_first is true (default), also configures ring-first routing so calls hit this cell before overflowing to the secretary — the same path used at signup.",
+      "scope": "agents:write",
+      "acquisitionStep": "collect_owner_phone",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "status": {
+            "type": "string"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "owner_phone_masked": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ring_first_applied": {
+            "type": "boolean"
+          },
+          "ring_first_status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "next_step": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "detach_number",
+      "title": "Detach Phone Number",
+      "description": "Release a phone number from a business back to the unassigned registry pool. Mirrors DELETE /api/v1/phone-numbers.",
+      "scope": "numbers:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "released_phone_number": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "search_available_numbers",
+      "title": "Search Available Numbers",
+      "description": "Search the carrier for phone numbers available to purchase (real-time Twilio inventory lookup). Mirrors GET /api/v1/phone-numbers/search.",
+      "scope": "numbers:read",
+      "acquisitionStep": "find_number",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "available_numbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "buy_number",
+      "title": "Buy Phone Number",
+      "description": "Request a real phone-number purchase. This is APPROVAL-GATED: the carrier bills immediately on execution, so the tool only prepares a request for authenticated owner review. Caller-supplied human_confirmed, dashboard_session, or system_policy fields never authorize execution. Relay the stored request and review URL to the owner; do not claim a number was purchased while approval is pending. Existing entitlement and carrier reservation checks still apply. Mirrors POST /api/v1/phone-numbers/purchase via numbers.purchase.",
+      "scope": "numbers:write",
+      "acquisitionStep": "buy_number",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "status": {
+            "type": "string"
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "business_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "request_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "risk_level": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "approval": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "result": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "On executed: { number, vapi_registered, agent_attached, compliance: { high_risk_category, disclosure_note } }."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "list_knowledge",
+      "title": "List Agent Knowledge",
+      "description": "List agent knowledge base entries for a business. Mirrors GET /api/v1/knowledge.",
+      "scope": "knowledge:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "knowledge": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "upsert_knowledge",
+      "title": "Create or Update Agent Knowledge",
+      "description": "Create a new agent knowledge base entry, or update one when `id` is provided. Mirrors POST /api/v1/knowledge. Creating requires title, content, and content_type.",
+      "scope": "knowledge:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "knowledge": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_products",
+      "title": "List Agent Products",
+      "description": "List a business's agent product catalog. Mirrors GET /api/v1/products.",
+      "scope": "products:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "upsert_product",
+      "title": "Create or Update Agent Product",
+      "description": "Create a new product row, or update one when `id` is provided. Mirrors POST /api/v1/products. Creating requires name and business_id. Pass `quantity` to set/update inventory.",
+      "scope": "products:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "product": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_config_versions",
+      "title": "List Agent Config Versions",
+      "description": "List an agent's hashed, redacted assistant config version history (rollback lineage included). Pass `version` to fetch one version's full redacted config_snapshot instead of the list. Mirrors GET /api/v1/agents/versions.",
+      "scope": "agents:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "agent_id": {
+            "type": "string"
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "version": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_change_history",
+      "title": "Get Agent Change History",
+      "description": "List an agent's recent config-change audit trail (change_type, change_source, old/new value, timestamp) from admin_change_history — the same record the admin_get_change_history voice tool reads over the phone. Every mutation KaiCalls makes to an agent (via update_agent_config, configure_agent_business_rules, the admin call-in secretary, or the dashboard) is logged here and reversible with rollback_config.",
+      "scope": "agents:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "agent_id": {
+            "type": "string"
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "rollback_config",
+      "title": "Rollback Agent Configuration",
+      "description": "Request a rollback to a prior assistant_config_versions snapshot. This changes live greeting, voice, prompt and model settings, so authenticated owner review of the exact stored request is required. Caller-supplied authority fields never authorize execution. Discover a target with list_config_versions or get_change_history; relay the pending request's review URL. The agent.config.rollback executor preserves version recording and secret exclusion after trusted approval.",
+      "scope": "agents:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "status": {
+            "type": "string"
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "agent_id": {
+            "type": "string"
+          },
+          "business_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "request_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "risk_level": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "approval": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "result": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "On executed: { agent_id, restored_from_version, restored_fields, skipped_fields, new_version_number, warning? }."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_observability_events",
+      "title": "List Observability Events",
+      "description": "List a business-scoped timeline of compact call-runtime events and redacted integration-delivery attempts. Mirrors GET /api/v1/observability-events and uses bounded keyset pagination.",
+      "scope": "events:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer"
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "next_cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_tool_execution_logs",
+      "title": "List Tool Execution Logs",
+      "description": "List per-call Vapi tool execution traces from vapi_tool_execution_logs — outcome, latency, timeout, and a redacted result preview for each routed tool call. Mirrors GET /api/v1/tool-execution-logs. Answers \"did this tool call actually work\".",
+      "scope": "events:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "logs": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_subscription_history",
+      "title": "List Subscription Change History",
+      "description": "List plan/price change history from subscription_change_history — the billing analogue of admin_change_history, written from the Stripe webhook and the right-size apply job. Mirrors GET /api/v1/subscription-history.",
+      "scope": "billing:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_overage_charges",
+      "title": "List Overage Charges",
+      "description": "List the idempotent overage-minutes ledger from billing_overage_charges (legacy per-minute-overage tiers only — 2026 plans carry no overage). GET /v1/balance/get_balance only returns an aggregate; this returns the underlying per-period ledger rows. Mirrors GET /api/v1/overage-charges.",
+      "scope": "billing:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "charges": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_rightsize_recommendations",
+      "title": "List Plan Right-Size Recommendations",
+      "description": "List per-period auto-right-size decisions from plan_rightsize_recommendations, including the dry_run -> notified -> (kept | applied | superseded) lifecycle. Answers \"is this business about to get right-sized\". Mirrors GET /api/v1/rightsize-recommendations.",
+      "scope": "billing:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "report_issue",
+      "title": "Report an Issue",
+      "description": "Report a problem with your KaiCalls agent, phone number, billing, or account. Saves the report to your change history and notifies KaiCalls support so a person can follow up — use this any time something is broken or not working as expected.",
+      "scope": "support:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "report_id": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "support_notified": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
       }
     }
   ],
