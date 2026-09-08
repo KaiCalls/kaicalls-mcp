@@ -29,6 +29,8 @@
       "audience": "Existing KaiCalls accounts.",
       "description": "The full operator inventory — calls, leads, voicemail, SMS, campaigns, analytics, agent config, evals, config history and billing for a business the caller already belongs to.",
       "tools": [
+        "request_extra_number",
+        "get_extra_number_status",
         "retry_setup",
         "get_setup_recovery_status",
         "make_call",
@@ -59,7 +61,10 @@
         "update_agent_config",
         "request_kaicalls_update",
         "get_usage",
+        "list_plans",
+        "get_checkout_status",
         "get_balance",
+        "create_checkout",
         "list_numbers",
         "get_phone_flow",
         "update_phone_flow",
@@ -101,25 +106,43 @@
       "audience": "First-time buyers who do not have an account yet.",
       "description": "A strict subset of the account surface: only the tools that take someone from \"I keep missing calls\" to a working business number that answers. Prefer this endpoint when helping someone set up a new phone line — it is the same authority, narrowed to the setup job, so a routing model is not choosing one tool out of fifty-one.",
       "tools": [
+        "request_extra_number",
+        "get_extra_number_status",
         "retry_setup",
         "get_setup_recovery_status",
         "make_call",
         "list_agents",
         "get_business_info",
+        "get_operational_settings",
         "configure_staff_alerts",
         "get_activation_status",
         "confirm_notification_destination",
         "retry_activation_notification",
         "choose_customer_route",
+        "configure_textable_links",
+        "configure_agent_business_rules",
+        "update_agent_config",
+        "get_usage",
+        "list_plans",
+        "get_checkout_status",
+        "create_checkout",
         "list_numbers",
+        "get_phone_flow",
+        "update_phone_flow",
         "set_up_phone_system",
         "get_phone_system_status",
+        "add_team_phone",
         "list_voices",
         "create_agent",
         "attach_number",
         "set_owner_phone",
         "search_available_numbers",
-        "buy_number"
+        "buy_number",
+        "list_knowledge",
+        "upsert_knowledge",
+        "list_config_versions",
+        "get_change_history",
+        "rollback_config"
       ],
       "job": [
         {
@@ -127,8 +150,20 @@
           "intent": "Read back what this business is and what it already has set up."
         },
         {
+          "step": "choose_plan",
+          "intent": "Compare current plans and their allowances."
+        },
+        {
+          "step": "check_payment",
+          "intent": "Confirm checkout billing separately from phone activation."
+        },
+        {
           "step": "choose_voice",
           "intent": "Hear and pick the voice that answers the phone."
+        },
+        {
+          "step": "start_checkout",
+          "intent": "Open hosted checkout for the selected plan; the owner authorizes payment in Stripe."
         },
         {
           "step": "create_secretary",
@@ -162,6 +197,32 @@
     }
   ],
   "tools": [
+    {
+      "name": "request_extra_number",
+      "title": "Review an Extra Number",
+      "description": "Reserve an exact pool number and request an owner-only browser review of its recurring extra-line price. Requires numbers:write and billing:write. Never charges included or prepaid capacity; use attach_number for included allocation. This tool does not approve payment or prove activation.",
+      "scope": "billing:write",
+      "acquisitionStep": "buy_number",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_extra_number_status",
+      "title": "Get Extra Number Request Status",
+      "description": "Read an owner-authorized extra-number request. Billing, assignment and live activation are distinct. Unknown checkout or provider outcomes retain the original request and number; never start a replacement purchase.",
+      "scope": "numbers:read",
+      "acquisitionStep": "connect_number",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
     {
       "name": "retry_setup",
       "title": "Reconcile Existing Setup",
@@ -646,6 +707,7 @@
       "title": "Get Operational Settings",
       "description": "Audit the business-level operational setup required before changing a live account: staff alert recipients, SMS/email alert flags, escalation rules, textable send-link entries, and assigned agent voice/model/greeting metadata.",
       "scope": "agents:read",
+      "acquisitionStep": "understand_business",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -985,6 +1047,7 @@
       "title": "Configure Textable Links",
       "description": "Create or repair the business_links entries used by the send_link/send_sms tools. Use this when callers need booking, directions, cancellation, sister-location, or service-specific links texted without exposing raw URLs in the voice prompt.",
       "scope": "agents:write",
+      "acquisitionStep": "create_secretary",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -1032,6 +1095,7 @@
       "title": "Configure Agent Business Rules",
       "description": "Safely add or replace a named operational rules section inside an agent inbound prompt, then route the prompt patch through the governed agent.patch broker. Use this for cross-business handoffs, callback language, alert promises, and client-specific operating rules without round-tripping the whole prompt manually.",
       "scope": "agents:write",
+      "acquisitionStep": "create_secretary",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -1625,6 +1689,7 @@
       "title": "Update Agent Configuration",
       "description": "Edit an agent's live runtime configuration — greeting/first message, inbound or SMS prompt, voice, language model, max call duration, and call-transfer settings — routed through the governed update broker so every change keeps the consent + audit trail (a versioned config snapshot and change history). Every write here is reversible: inspect what changed with get_change_history or list_config_versions, then undo it with rollback_config. Mutating changes need an idempotency_key; high-impact live changes need human authority (an authority envelope) or queue_for_approval for dashboard sign-off. For just a single named operational-rules section, prefer configure_agent_business_rules.",
       "scope": "agents:write",
+      "acquisitionStep": "create_secretary",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -1805,6 +1870,7 @@
       "title": "Get API Usage",
       "description": "List recent API usage events (endpoint, method, status code, cost) for the caller's account. Mirrors GET /api/v1/usage.",
       "scope": "events:read",
+      "acquisitionStep": "confirm_live",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -1839,10 +1905,11 @@
       }
     },
     {
-      "name": "get_balance",
-      "title": "Get Balance",
-      "description": "Get per-business minutes-used and subscription status across every business the caller can access. Mirrors GET /api/v1/balance.",
+      "name": "list_plans",
+      "title": "List Plans",
+      "description": "Read the canonical public KaiCalls plan catalog, monthly USD prices and allowances. Does not select a plan, create checkout, or change billing.",
       "scope": "billing:read",
+      "acquisitionStep": "choose_plan",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -1854,7 +1921,7 @@
             "type": "string",
             "description": "Present when success is false"
           },
-          "businesses": {
+          "plans": {
             "type": "array",
             "items": {
               "type": "object"
@@ -1871,6 +1938,198 @@
         "destructiveHint": false,
         "idempotentHint": true,
         "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_checkout_status",
+      "title": "Get Checkout Status",
+      "description": "Read a Stripe-verified subscription checkout receipt for a business you own. Requires business_id and session_id from checkout. Confirmed billing does not prove agent, number, or call activation; use get_activation_status for setup proof. This tool never creates checkout or retries provisioning.",
+      "scope": "billing:read",
+      "acquisitionStep": "check_payment",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "checkout": {
+            "type": "object"
+          },
+          "billing_only": {
+            "type": "boolean"
+          },
+          "activation_verified": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_balance",
+      "title": "Get Balance",
+      "description": "Get plan terms and usage for accessible businesses. No-card trials report 25 lifetime minutes, zero price and no overage; paid plans report the mapped subscription price and billing-cycle usage. Answered-call allowance usage is the raw billable call count, matching dashboard and right-sizing. A separate weighted count is informational only, not allowance consumption or right-sizing. Phone allowance includes purchased extra lines. A balance does not prove activation or inbound routing. Mirrors GET /api/v1/balance; unavailable billing data returns an error.",
+      "scope": "billing:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "businesses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "business_id": {
+                  "type": "string"
+                },
+                "plan_key": {
+                  "type": "string"
+                },
+                "plan_name": {
+                  "type": "string"
+                },
+                "price_monthly": {
+                  "type": "number",
+                  "description": "Mapped subscription base price in USD; zero for no-card trial. Excludes add-ons and tax."
+                },
+                "allowance_model": {
+                  "type": "string",
+                  "enum": [
+                    "minutes",
+                    "answered_calls"
+                  ]
+                },
+                "minutes_used": {
+                  "type": "number"
+                },
+                "minutes_allowance": {
+                  "type": "number"
+                },
+                "answered_calls_used": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Raw billable call count used for allowance reporting, matching dashboard and right-sizing; null for minute plans."
+                },
+                "answered_calls_raw": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Unweighted billable call count for reporting."
+                },
+                "answered_calls_weighted": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Informational only, not allowance consumption or right-sizing: ordinary calls 1, human-answered silent-listen calls 0.5; null for minute plans."
+                },
+                "answered_calls_allowance": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "phone_numbers": {
+                  "type": "integer",
+                  "description": "Active registered numbers, including unassigned numbers."
+                },
+                "phone_numbers_allowance": {
+                  "type": "integer"
+                },
+                "subscription_status": {
+                  "type": "string"
+                },
+                "overage_allowed": {
+                  "type": "boolean"
+                },
+                "period_start": {
+                  "type": "string"
+                },
+                "period_end": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Null for lifetime trial usage; does not imply the trial cannot expire."
+                },
+                "period_kind": {
+                  "type": "string",
+                  "enum": [
+                    "lifetime_trial",
+                    "billing_cycle"
+                  ]
+                }
+              },
+              "required": [
+                "business_id",
+                "plan_key",
+                "plan_name",
+                "price_monthly",
+                "allowance_model",
+                "minutes_used",
+                "minutes_allowance",
+                "answered_calls_used",
+                "answered_calls_raw",
+                "answered_calls_weighted",
+                "answered_calls_allowance",
+                "phone_numbers",
+                "phone_numbers_allowance",
+                "subscription_status",
+                "overage_allowed",
+                "period_start",
+                "period_end",
+                "period_kind"
+              ]
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "create_checkout",
+      "title": "Create or Resume Checkout",
+      "description": "Create or resume an owner-bound hosted Stripe checkout for a current plan from list_plans. Requires business_id, plan_id, and a durable idempotency_key. Reuse the same key for retries; a changed plan requires a new key. The owner must open the returned link and authorize payment in Stripe. This tool never proves payment or phone activation. After checkout, use get_checkout_status with the returned session_id.",
+      "scope": "billing:write",
+      "acquisitionStep": "start_checkout",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
       }
     },
     {
@@ -1914,6 +2173,7 @@
       "title": "Get Phone Flow",
       "description": "Read how calls ring on the business's hosted phone system: which cells and desk phones ring, for how many seconds, and whether after-hours callers go straight to the AI receptionist. Reconciled from the phone system on every call. Mirrors POST /api/v1/phone-system action=get_flow. Returns 409 when the hosted phone system is not set up for this business.",
       "scope": "numbers:read",
+      "acquisitionStep": "set_up_phone_system",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -1962,6 +2222,7 @@
       "title": "Update Phone Flow",
       "description": "Replace how calls ring on the business's hosted phone system with a full phone flow: { version: 1, hours: { mode: 'always' | 'business_hours', afterHours: 'kai' }, ring: { members: [{ kind: 'cell', phone: E.164, label, requirePressOne } | { kind: 'desk_phone' | 'user', userId, label }], timeoutSeconds: 5-120 }, overflow: 'kai' }. Applied idempotently (only real differences are written); every member passes the forwarding-loop guard; business_hours mode derives the schedule from the business hours already on file. Read the current flow with get_phone_flow first and send it back with your edits. Mirrors POST /api/v1/phone-system action=save_flow.",
       "scope": "numbers:write",
+      "acquisitionStep": "set_up_phone_system",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -2150,6 +2411,7 @@
       "title": "Add Team Phone",
       "description": "Add a teammate's (or the owner's) cell to the phone system's team ring group so it rings before Kai answers. Idempotent — a cell already in the group reports ring_group already_member. Owners and admins are also registered on the admin roster, so calling the business line from that cell reaches the admin secretary; a member only rings. The business's own forwarded-from office line is refused (forwarding_loop) because ringing it would bounce the call straight back. Requires the phone system to be set up first (set_up_phone_system). Mirrors POST /api/v1/phone-system action=add_ring_group_member.",
       "scope": "numbers:write",
+      "acquisitionStep": "set_up_phone_system",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -2852,6 +3114,7 @@
       "title": "List Agent Knowledge",
       "description": "List agent knowledge base entries for a business. Mirrors GET /api/v1/knowledge.",
       "scope": "knowledge:read",
+      "acquisitionStep": "create_secretary",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -2887,6 +3150,7 @@
       "title": "Create or Update Agent Knowledge",
       "description": "Create a new agent knowledge base entry, or update one when `id` is provided. Mirrors POST /api/v1/knowledge. Creating requires title, content, and content_type.",
       "scope": "knowledge:write",
+      "acquisitionStep": "create_secretary",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -2992,6 +3256,7 @@
       "title": "List Agent Config Versions",
       "description": "List an agent's hashed, redacted assistant config version history (rollback lineage included). Pass `version` to fetch one version's full redacted config_snapshot instead of the list. Mirrors GET /api/v1/agents/versions.",
       "scope": "agents:read",
+      "acquisitionStep": "create_secretary",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -3036,6 +3301,7 @@
       "title": "Get Agent Change History",
       "description": "List an agent's recent config-change audit trail (change_type, change_source, old/new value, timestamp) from admin_change_history — the same record the admin_get_change_history voice tool reads over the phone. Every mutation KaiCalls makes to an agent (via update_agent_config, configure_agent_business_rules, the admin call-in secretary, or the dashboard) is logged here and reversible with rollback_config.",
       "scope": "agents:read",
+      "acquisitionStep": "create_secretary",
       "outputSchema": {
         "type": "object",
         "properties": {
@@ -3074,6 +3340,7 @@
       "title": "Rollback Agent Configuration",
       "description": "Request a rollback to a prior assistant_config_versions snapshot. This changes live greeting, voice, prompt and model settings, so authenticated owner review of the exact stored request is required. Caller-supplied authority fields never authorize execution. Discover a target with list_config_versions or get_change_history; relay the pending request's review URL. The agent.config.rollback executor preserves version recording and secret exclusion after trusted approval.",
       "scope": "agents:write",
+      "acquisitionStep": "create_secretary",
       "outputSchema": {
         "type": "object",
         "properties": {
