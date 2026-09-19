@@ -1,5 +1,7 @@
 # KaiCalls on Muse: connector submission packet
 
+> **Status:** Submitted for review on 2026-09-19. Muse confirmed: "We'll review KaiCalls and get in touch." Not yet approved or listed.
+
 Everything needed to list KaiCalls in the **Muse Connector Platform** (Meta's Muse, [muse.ai/platform](https://muse.ai/platform), open to third-party connectors as of 2026-09-18).
 
 Muse's model is "you bring the API, Muse brings the agent, the browser, and the context." For KaiCalls, that means someone can ask Muse *"who called my business today?"* and Muse reads the answer from the hosted KaiCalls MCP server.
