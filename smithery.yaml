@@ -1,0 +1,43 @@
+# Smithery listing config for the hosted KaiCalls MCP server.
+#
+# KaiCalls is a remote (URL) server: Smithery's gateway proxies to the
+# endpoint below. There is nothing to build or run, so this file has no
+# runtime/startCommand section.
+#
+# The Smithery CLI (smithery@1.2.0) reads `name` (server slug, used when
+# `-n` is not passed) and `target` from this file. The CLI takes a URL
+# server's config schema only from `--config-schema`, so `configSchema`
+# below is the source for that flag. See the publish command in README.md.
+#
+# Existing Smithery listing: https://smithery.ai/servers/connor-h8jd/kaicalls
+
+name: kaicalls
+target: remote
+
+# Facts for the listing, mirrored from mcp.json and server.json.
+displayName: KaiCalls
+description: >-
+  AI phone answering service for businesses. Read calls, transcripts,
+  recordings, leads, voicemail, SMS and analytics, and run approved setup
+  actions on a hosted KaiCalls account.
+homepage: https://callmcp.ai?utm_source=mcp-registry
+upstreamUrl: https://www.kaicalls.com/api/mcp
+transport: streamable-http
+license: MIT
+
+# Session config (JSON Schema with Smithery's x-from extension).
+# Optional: without a key, Smithery uses the server's OAuth 2.1 flow
+# (PKCE S256, DCR, CIMD). `authorization` is reserved by Smithery OAuth,
+# so the key travels in the X-KaiCalls-API-Key header, which the server
+# also accepts.
+configSchema:
+  type: object
+  properties:
+    kaicallsApiKey:
+      type: string
+      title: KaiCalls API key
+      description: Optional kc_live_ key from KaiCalls Settings > API Keys. Leave empty to sign in with OAuth.
+      x-from:
+        header: x-kaicalls-api-key
+      x-to:
+        header: X-KaiCalls-API-Key

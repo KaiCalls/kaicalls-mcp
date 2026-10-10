@@ -1,9 +1,13 @@
 # KaiCalls MCP — Tool Catalog
 
-18 tools. Every surface that advertises the KaiCalls inventory (this repo,
-`/.well-known/mcp.json`, the server card, and the live `tools/list`) is derived
-from one source of truth, so descriptions and safety annotations never drift.
-Full JSON Schemas for inputs/outputs are in [`../mcp.json`](../mcp.json).
+The account endpoint exposes 69 tools (39 read-only, 30 write/setup). This page
+covers the 18 core call, lead and operational-setup tools in depth. The full list of
+all 69 tools, with scope, safety hints and a one-line description, is in the
+[README](../README.md#tools). Every surface that advertises the KaiCalls inventory
+(this repo, `/.well-known/mcp.json`, the server card, and the live `tools/list`) is
+derived from one source of truth, so descriptions and safety annotations never drift.
+Descriptions, scopes, annotations and output schemas are in [`../mcp.json`](../mcp.json);
+the live `tools/list` response returns each tool's input schema.
 
 **Annotation legend** — `readOnlyHint` (no writes), `destructiveHint` (irreversible
 real-world effect), `idempotentHint` (repeat-safe), `openWorldHint` (touches systems
@@ -11,7 +15,7 @@ outside the server's own data).
 
 ---
 
-## Read tools (13)
+## Core read tools (13)
 
 ### `list_agents` — `agents:read`
 List KaiCalls agents available to the authenticated account.
@@ -86,7 +90,7 @@ Inputs: `days?` (1–90, default 30).
 
 ---
 
-## Write/setup tools (5)
+## Core write/setup tools (5)
 
 ### `make_call` — `calls:write`
 Initiate a **real** outbound phone call via a KaiCalls AI agent.
