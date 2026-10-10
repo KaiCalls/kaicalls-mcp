@@ -37,7 +37,7 @@ Add a remote (Streamable HTTP) MCP server:
 
 ## Verifying the connection
 
-A successful connect lists 18 tools. Good first calls (all read-only):
+A successful connect to the account endpoint lists 69 tools. Good first calls (all read-only):
 
 - `list_agents` — confirms the account + business scope
 - `get_business_info` — business profile + recent call stats

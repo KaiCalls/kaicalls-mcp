@@ -1,0 +1,33 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.kaicalls/kaicalls",
+  "title": "KaiCalls",
+  "description": "AI phone answering for businesses: calls, transcripts, leads, voicemail, SMS, campaigns and setup.",
+  "version": "1.0.2",
+  "websiteUrl": "https://callmcp.ai?utm_source=mcp-registry",
+  "repository": {
+    "url": "https://github.com/KaiCalls/kaicalls-mcp",
+    "source": "github"
+  },
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/KaiCalls/kaicalls-mcp/main/assets/logo-400.png",
+      "mimeType": "image/png",
+      "sizes": ["400x400"]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://www.kaicalls.com/api/mcp",
+      "headers": [
+        {
+          "name": "X-KaiCalls-API-Key",
+          "description": "Optional KaiCalls API key (kc_live_...) from Settings > API Keys. Omit it to sign in with OAuth 2.1 instead.",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
