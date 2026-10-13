@@ -1,8 +1,8 @@
 {
   "serverInfo": {
     "name": "KaiCalls",
-    "version": "1.0.0",
-    "description": "AI-powered phone answering service for businesses. Handles inbound calls, outbound campaigns, lead intake, appointment scheduling, and after-hours management."
+    "version": "1.1.0",
+    "description": "AI receptionist + business phone line: get a number, answer missed calls, read calls, text leads."
   },
   "provider": {
     "organization": "KaiCalls",
@@ -63,6 +63,16 @@
         "get_usage",
         "list_plans",
         "get_checkout_status",
+        "get_text_registration",
+        "save_text_registration_details",
+        "start_text_registration_checkout",
+        "set_branded_caller_id",
+        "create_customer_workspace",
+        "set_up_business",
+        "get_setup_checklist",
+        "connect_whatsapp",
+        "get_whatsapp_status",
+        "get_channel_status",
         "get_balance",
         "create_checkout",
         "list_numbers",
@@ -104,7 +114,7 @@
       "name": "acquisition",
       "url": "https://www.kaicalls.com/api/mcp/acquisition",
       "audience": "First-time buyers who do not have an account yet.",
-      "description": "A strict subset of the account surface: only the tools that take someone from \"I keep missing calls\" to a working business number that answers. Prefer this endpoint when helping someone set up a new phone line — it is the same authority, narrowed to the setup job, so a routing model is not choosing one tool out of fifty-one.",
+      "description": "A strict subset of the account surface: only the tools that take someone from \"I keep missing calls\" to a working business number that answers. Prefer this endpoint when helping someone set up a new phone line — it is the same authority, narrowed to the setup job, so a routing model is not choosing from the full account inventory.",
       "tools": [
         "request_extra_number",
         "get_extra_number_status",
@@ -170,6 +180,10 @@
           "intent": "Create the secretary that will answer calls."
         },
         {
+          "step": "collect_owner_phone",
+          "intent": "Get the number Kai will text after every call and ring first before overflowing — frame it as that, not a form field: \"what's the best number for me to text you at when I take a call?\" A caller who declines is recorded as an inquiry via set_owner_phone's decline path; do not continue to find_number/buy_number for them."
+        },
+        {
           "step": "find_number",
           "intent": "Find a phone number in the right area code."
         },
@@ -180,10 +194,6 @@
         {
           "step": "connect_number",
           "intent": "Route the number to the secretary."
-        },
-        {
-          "step": "collect_owner_phone",
-          "intent": "Get the owner's own mobile number so Kai can ring it first and confirm forwarding."
         },
         {
           "step": "set_up_phone_system",
@@ -252,7 +262,7 @@
     {
       "name": "make_call",
       "title": "Make Call",
-      "description": "Initiate an outbound voice preview via a KaiCalls AI agent. This lets the owner hear Kai, but it is preview only and never proves inbound routing or advances activation. Pass an idempotency_key to make the request safely retryable.",
+      "description": "Place an outbound call through a KaiCalls AI agent: a voice preview so the owner can hear Kai, or a call made on the owner's behalf (a landlord, clinic, pharmacy, school or utility) with the task in context. A call never proves inbound routing or advances activation. When the person asking writes in another language, pass report_language so Kai gathers exact details and the result is relayed in that language; Kai speaks call_language (English by default) on the phone. A new account's first call to a US or Canada business line is free; after that the account needs a plan. Kai calls businesses, not personal cell phones, on a free call. Pass an idempotency_key to make the request safely retryable.",
       "scope": "calls:write",
       "acquisitionStep": "confirm_live",
       "outputSchema": {
@@ -281,20 +291,20 @@
           "counts_toward_activation": {
             "type": "boolean"
           },
+          "call_language": {
+            "type": "string"
+          },
+          "report_language": {
+            "type": "string"
+          },
           "call": {
             "type": "object",
             "properties": {
               "id": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "conversation_id": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "status": {
                 "type": "string"
@@ -306,10 +316,7 @@
                 "type": "string"
               },
               "lead_id": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "to": {
                 "type": "string"
@@ -317,9 +324,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -352,59 +357,34 @@
                 "type": "string"
               },
               "conversation_id": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "status": {
                 "type": "string"
               },
               "duration_seconds": {
-                "type": [
-                  "number",
-                  "null"
-                ]
+                "type": ["number", "null"]
               },
               "agent_id": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "agent_name": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "business_id": {
                 "type": "string"
               },
               "lead_id": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "summary": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "recording_url": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "quality_dimensions": {
-                "type": [
-                  "object",
-                  "array",
-                  "null"
-                ]
+                "type": ["object", "array", "null"]
               },
               "created_at": {
                 "type": "string"
@@ -412,9 +392,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -459,18 +437,13 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "filters": {
             "type": "object"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -503,10 +476,7 @@
             "type": "boolean"
           },
           "transcript": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "transcript_truncated": {
             "type": "boolean"
@@ -515,9 +485,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -553,37 +521,22 @@
                 "type": "string"
               },
               "conversation_id": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "status": {
                 "type": "string"
               },
               "duration_seconds": {
-                "type": [
-                  "number",
-                  "null"
-                ]
+                "type": ["number", "null"]
               },
               "recording_url": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "agent_id": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "agent_name": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "business_id": {
                 "type": "string"
@@ -594,9 +547,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -642,18 +593,13 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "filters": {
             "type": "object"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -690,9 +636,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -723,10 +667,7 @@
             "type": "object"
           },
           "notification_settings": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "business_links": {
             "type": "array",
@@ -747,9 +688,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -786,18 +725,13 @@
             "type": "boolean"
           },
           "current_settings": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "proposed_settings": {
             "type": "object"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -828,16 +762,10 @@
             "type": "string"
           },
           "activation_session_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "state": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "next_action": {
             "type": "string"
@@ -865,15 +793,10 @@
             }
           },
           "activation_receipt": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -910,24 +833,16 @@
             "type": "string"
           },
           "destination_masked": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "delivery_started": {
             "type": "boolean"
           },
           "attempt": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -964,15 +879,10 @@
             "type": "string"
           },
           "attempt": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1030,9 +940,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1078,9 +986,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1111,63 +1017,34 @@
             "type": "string"
           },
           "code": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "business_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "agent_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "section_title": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "rules_count": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "request_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "approval": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "summary": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "result": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1212,18 +1089,13 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "filters": {
             "type": "object"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1253,9 +1125,7 @@
             "type": "object"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1300,15 +1170,10 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1353,18 +1218,13 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "filters": {
             "type": "object"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1409,18 +1269,13 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "filters": {
             "type": "object"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1453,27 +1308,16 @@
             "type": "boolean"
           },
           "sequence_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "queued": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "total_leads": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1518,9 +1362,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1565,9 +1407,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1598,36 +1438,22 @@
             "description": "create or update"
           },
           "lead": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "updated": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "failed": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "results": {
-            "type": [
-              "array",
-              "null"
-            ],
+            "type": ["array", "null"],
             "items": {
               "type": "object"
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1654,27 +1480,16 @@
             "description": "Present when success is false"
           },
           "message_sid": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "to": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "from": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1687,7 +1502,7 @@
     {
       "name": "update_agent_config",
       "title": "Update Agent Configuration",
-      "description": "Edit an agent's live runtime configuration — greeting/first message, inbound or SMS prompt, voice, language model, max call duration, and call-transfer settings — routed through the governed update broker so every change keeps the consent + audit trail (a versioned config snapshot and change history). Every write here is reversible: inspect what changed with get_change_history or list_config_versions, then undo it with rollback_config. Mutating changes need an idempotency_key; high-impact live changes need human authority (an authority envelope) or queue_for_approval for dashboard sign-off. For just a single named operational-rules section, prefer configure_agent_business_rules.",
+      "description": "Edit an agent's live runtime configuration — greeting/first message, inbound or SMS prompt, voice, language model, max call duration, and call-transfer settings — routed through the governed update broker so every change keeps the consent + audit trail (a versioned config snapshot and change history). Every write here is reversible: inspect what changed with get_change_history or list_config_versions, then undo it with rollback_config. Mutating changes need an idempotency_key. When the business owner or an admin is signed in through this connector, their own changes apply immediately. High-impact live changes made with an API key or on someone else's behalf queue for the owner's review instead (the owner is notified with a review link). For just a single named operational-rules section, prefer configure_agent_business_rules.",
       "scope": "agents:write",
       "acquisitionStep": "create_secretary",
       "outputSchema": {
@@ -1705,63 +1520,34 @@
             "type": "string"
           },
           "code": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "business_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "agent_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "request_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "risk_level": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "message": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "approval": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "summary": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "result": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1790,72 +1576,40 @@
             "type": "string"
           },
           "code": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "intent": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "business_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "request_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "risk_level": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "message": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "approval": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "summary": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "missing_fields": {
-            "type": [
-              "array",
-              "null"
-            ],
+            "type": ["array", "null"],
             "items": {
               "type": "string"
             }
           },
           "result": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1892,9 +1646,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1928,9 +1680,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1967,9 +1717,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -1977,6 +1725,445 @@
         "destructiveHint": false,
         "idempotentHint": true,
         "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_text_registration",
+      "title": "Get Text Registration",
+      "description": "Read where a business stands on its own carrier registration for business texting: saved details (never the EIN; only whether one is on file), payment, filing stage, whether sales texts are allowed, and the one next step. Also returns `known` (details already on file from signup, the owner's account and any caller ID registration, to confirm with the owner) `missing` (only the questions still to ask, in order, each with a one-line `why` the carriers need it) and `next_question` (ask the owner this one, then the next). Mirrors the dashboard's text registration page. Read-only.",
+      "scope": "billing:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "registration": {
+            "type": ["object", "null"]
+          },
+          "chasers": {
+            "type": "object"
+          },
+          "addon": {
+            "type": "object"
+          },
+          "known": {
+            "type": "object"
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "next_question": {
+            "type": ["object", "null"]
+          },
+          "ein_on_file": {
+            "type": "boolean"
+          },
+          "next_step": {
+            "type": "string"
+          },
+          "next_step_text": {
+            "type": "string"
+          },
+          "setup_url": {
+            "type": "string"
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "save_text_registration_details",
+      "title": "Save Text Registration Details",
+      "description": "Save a business's legal name, entity type, industry, website, address, authorized contact and what it will text (service only, or service and sales) for its own carrier registration. Business owner only. Pass only what the owner told you: anything omitted is filled from what is already on file (see get_text_registration `known`). Ask one question at a time and save each answer as you go: answers given so far are kept, and while questions remain the result lists `saved_steps`, `missing` and the `next_question` to ask. The owner can finish here or on the registration page. Never takes the EIN: the owner types it on the registration page returned as setup_url. Refused once a filing is already with the carriers. Charges nothing and files nothing.",
+      "scope": "billing:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "saved": {
+            "type": "boolean"
+          },
+          "saved_steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "next_question": {
+            "type": "object"
+          },
+          "registration": {
+            "type": "object"
+          },
+          "consent_url": {
+            "type": "string"
+          },
+          "next_step": {
+            "type": "string"
+          },
+          "next_step_text": {
+            "type": "string"
+          },
+          "setup_url": {
+            "type": "string"
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "start_text_registration_checkout",
+      "title": "Start Text Registration Checkout",
+      "description": "Create the payment link for a business's own carrier registration (a one-time filing fee plus a monthly campaign fee). Business owner only, and only once the details and the EIN are saved. Returns checkout_url for the owner to open and pay; nothing is charged by this tool, and filing starts only after payment. Never claim the registration is paid or filed from a checkout_url. On a plan that includes registration there is nothing to pay: the tool sends it to the carriers straight away and returns included_in_plan and filed true instead of a link, so call it only after the owner confirms the details.",
+      "scope": "billing:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "checkout_url": {
+            "type": "string"
+          },
+          "one_time_usd": {
+            "type": "number"
+          },
+          "monthly_usd": {
+            "type": "number"
+          },
+          "charged": {
+            "type": "boolean"
+          },
+          "included_in_plan": {
+            "type": "boolean"
+          },
+          "filed": {
+            "type": "boolean"
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "set_branded_caller_id",
+      "title": "Set Branded Caller ID",
+      "description": "File the business name that landlines show when the business's number calls out (caller ID name). Included with the business's own text registration once it is paid; charges nothing. Business owner only. The name must be at most 15 characters, start with a letter, and use only letters, numbers, periods, commas and spaces (get_text_registration returns a suggestion in branded_caller_id.suggestedName). Files with the carriers once the business profile is approved; review then takes a day or two and carriers show it within 72 hours. US local numbers only. Never claim it is showing on calls from this result.",
+      "scope": "billing:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "branded_caller_id": {
+            "type": "object"
+          },
+          "charged": {
+            "type": "boolean"
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "create_customer_workspace",
+      "title": "Create Customer Workspace",
+      "description": "Create a KaiCalls workspace for a business, owned by the business owner's own email (for a partner setting up a customer, or anyone setting up a business for its owner). Returns the checkout link the owner opens to pick a plan and enter their card; the phone line is set up automatically once they pay. Nothing is charged and no number exists until then. The owner signs in with their own email. By default the caller is added as an admin of the new workspace so they can finish setup (get_setup_checklist); pass join_as_admin false to skip. Pass partner_code to credit a referring partner; a partner never passes its own code for its own workspace. Fails if the email already has an account.",
+      "scope": "workspaces:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "owner_email": {
+            "type": "string"
+          },
+          "checkout_url": {
+            "type": ["string", "null"]
+          },
+          "joined_as_admin": {
+            "type": "boolean"
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "set_up_business",
+      "title": "Customize Business Line",
+      "description": "Optional line customization: use only when the owner explicitly asks Kai to answer with a business name and greeting. Never required to make calls, and never changes payment, usage or fraud limits. Extra business details are optional; do not ask a business-qualification questionnaire. An existing business greeting is left unchanged.",
+      "scope": "workspaces:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "already_business": {
+            "type": "boolean"
+          },
+          "changed": {
+            "type": "boolean"
+          },
+          "persona_mode": {
+            "type": "string"
+          },
+          "greeting_updated": {
+            "type": "boolean"
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_setup_checklist",
+      "title": "Get Setup Checklist",
+      "description": "Where one business stands on its plan, phone number, texting registration, WhatsApp, call and lead alert inboxes, and sending email as the business from its own Gmail. Each step has a state (done, in_progress, needs_owner, needs_action, unavailable) and one next action: the tool that moves it forward, or the one link the owner opens for steps only they can do (paying, typing the EIN, signing in to Facebook or Google). Read-only.",
+      "scope": "workspaces:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "checklist": {
+            "type": "object"
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "connect_whatsapp",
+      "title": "Connect WhatsApp",
+      "description": "Get the one link a business owner opens to put WhatsApp on their KaiCalls number. They sign in to Facebook as an admin of the business's Meta Business account and verify the number; the business owns its WhatsApp account. Uses the business's oldest KaiCalls line unless phone_number names another of its lines. Returns the same link while it is still valid (up to 3 days). Owner or admin only. Creates nothing billable and connects nothing by itself: call get_whatsapp_status after the owner finishes, and never say WhatsApp is connected until it does.",
+      "scope": "sms:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "whatsapp": {
+            "type": "object"
+          },
+          "created": {
+            "type": "boolean"
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_whatsapp_status",
+      "title": "Get WhatsApp Status",
+      "description": "Check whether WhatsApp is connected on a business's KaiCalls number, read live from the carrier. Connected only once the number is verified for WhatsApp; otherwise says whether the owner's link is still waiting, expired or failed.",
+      "scope": "sms:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "connected": {
+            "type": "boolean"
+          },
+          "connections": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_channel_status",
+      "title": "Get Channel Status",
+      "description": "List every customer channel a business can have (phone calls, text messages, WhatsApp, website chat, email, and the ones not offered yet) with its state: ready, needs_setup, blocked or not_available. Each row says whether a message can go out and whether customers can reach the business on it right now, and names the one next step with the tool that takes it when there is one. Ready only with the same proof the channel's own tool needs: texts to callers need the business's approved text registration, and WhatsApp needs a verified number. Read-only; changes nothing.",
+      "scope": "sms:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "channel": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "availability": {
+                  "type": "string",
+                  "enum": ["live", "built_off", "planned"]
+                },
+                "state": {
+                  "type": "string",
+                  "enum": ["ready", "needs_setup", "blocked", "not_available"]
+                },
+                "canSend": {
+                  "type": "boolean"
+                },
+                "canReceive": {
+                  "type": "boolean"
+                },
+                "nextStep": {
+                  "type": ["object", "null"]
+                }
+              }
+            }
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
       }
     },
     {
@@ -2015,10 +2202,7 @@
                 },
                 "allowance_model": {
                   "type": "string",
-                  "enum": [
-                    "minutes",
-                    "answered_calls"
-                  ]
+                  "enum": ["minutes", "answered_calls"]
                 },
                 "minutes_used": {
                   "type": "number"
@@ -2027,31 +2211,19 @@
                   "type": "number"
                 },
                 "answered_calls_used": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
+                  "type": ["number", "null"],
                   "description": "Raw billable call count used for allowance reporting, matching dashboard and right-sizing; null for minute plans."
                 },
                 "answered_calls_raw": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
+                  "type": ["number", "null"],
                   "description": "Unweighted billable call count for reporting."
                 },
                 "answered_calls_weighted": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
+                  "type": ["number", "null"],
                   "description": "Informational only, not allowance consumption or right-sizing: ordinary calls 1, human-answered silent-listen calls 0.5; null for minute plans."
                 },
                 "answered_calls_allowance": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": ["number", "null"]
                 },
                 "phone_numbers": {
                   "type": "integer",
@@ -2070,18 +2242,12 @@
                   "type": "string"
                 },
                 "period_end": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
+                  "type": ["string", "null"],
                   "description": "Null for lifetime trial usage; does not imply the trial cannot expire."
                 },
                 "period_kind": {
                   "type": "string",
-                  "enum": [
-                    "lifetime_trial",
-                    "billing_cycle"
-                  ]
+                  "enum": ["lifetime_trial", "billing_cycle"]
                 }
               },
               "required": [
@@ -2107,9 +2273,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2156,9 +2320,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2193,10 +2355,7 @@
             "description": "One-sentence plain-English description."
           },
           "line": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "kai_extension": {
             "type": "string"
@@ -2205,9 +2364,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2247,9 +2404,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2289,10 +2444,7 @@
             "type": "object"
           },
           "line": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "description": "The phone-system line (E.164), if a number is attached."
           },
           "created": {
@@ -2323,20 +2475,30 @@
           },
           "required_field": {
             "type": "string",
-            "enum": [
-              "business_address",
-              "owner_mobile"
-            ],
+            "enum": ["business_address", "owner_mobile"],
             "description": "Present when setup is blocked on a missing input."
           },
           "next_action": {
             "type": "string",
             "description": "What to collect and how to retry, when blocked."
+          },
+          "issues": {
+            "type": "array",
+            "description": "Address fields to correct when code is invalid_address.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2370,33 +2532,22 @@
             "type": "boolean"
           },
           "provisioned_at": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "kai_extension": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "ids": {
             "type": "object"
           },
           "line": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "next_step": {
             "type": "string"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2433,28 +2584,18 @@
                 "type": "string"
               },
               "name": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "role": {
                 "type": "string"
               },
               "ring_group": {
                 "type": "string",
-                "enum": [
-                  "added",
-                  "already_member"
-                ]
+                "enum": ["added", "already_member"]
               },
               "admin_roster": {
                 "type": "string",
-                "enum": [
-                  "registered",
-                  "skipped_member_role",
-                  "failed"
-                ]
+                "enum": ["registered", "skipped_member_role", "failed"]
               }
             }
           },
@@ -2463,9 +2604,7 @@
             "description": "Present when success is false."
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2501,9 +2640,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2533,9 +2670,7 @@
             "type": "object"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2577,9 +2712,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2612,10 +2745,7 @@
             "type": "object"
           },
           "webhook_secret": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "events": {
             "type": "array",
@@ -2627,9 +2757,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2662,9 +2790,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2697,9 +2823,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2712,7 +2836,7 @@
     {
       "name": "run_eval",
       "title": "Run Agent Eval",
-      "description": "Run a single eval scenario (eval_id) or every scenario for an agent (agent_id) against its live Vapi assistant and grade the result. Bills Vapi compute. Mirrors POST /api/v1/evals/run.",
+      "description": "Run a single eval scenario (eval_id) or every scenario for an agent (agent_id) against its live voice agent and grade the result. Bills voice-agent compute. Mirrors POST /api/v1/evals/run.",
       "scope": "evals:write",
       "outputSchema": {
         "type": "object",
@@ -2726,58 +2850,31 @@
             "description": "Present when success is false"
           },
           "run_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "vapi_run_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "status": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "passed": {
-            "type": [
-              "boolean",
-              "null"
-            ]
+            "type": ["boolean", "null"]
           },
           "results": {
-            "type": [
-              "array",
-              "object",
-              "null"
-            ]
+            "type": ["array", "object", "null"]
           },
           "total": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "completed": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           },
           "failed": {
-            "type": [
-              "integer",
-              "null"
-            ]
+            "type": ["integer", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2811,9 +2908,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2826,7 +2921,7 @@
     {
       "name": "create_agent",
       "title": "Create Agent",
-      "description": "Create a new KaiCalls agent — the secretary that answers this business’s calls (Vapi assistant + KaiCalls records) — with a system prompt, greeting, voice, and model. Mirrors POST /api/v1/agents. Every subsequent mutation to this agent is versioned (assistant_config_versions) and reversible via rollback_config — inspect history with get_change_history / list_config_versions. Compliance: KaiCalls automatically applies state-aware AI-disclosure and consent handling to every agent it provisions, and flags high-risk business categories for extra review.",
+      "description": "Create a new KaiCalls agent — the secretary that answers this business’s calls (the live voice agent plus KaiCalls records) — with a system prompt, greeting, voice, and model. Mirrors POST /api/v1/agents. Every subsequent mutation to this agent is versioned (assistant_config_versions) and reversible via rollback_config — inspect history with get_change_history / list_config_versions. Compliance: KaiCalls automatically applies state-aware AI-disclosure and consent handling to every agent it provisions, and flags high-risk business categories for extra review.",
       "scope": "agents:write",
       "acquisitionStep": "create_secretary",
       "outputSchema": {
@@ -2855,9 +2950,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2891,9 +2984,7 @@
             "type": "object"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2906,7 +2997,7 @@
     {
       "name": "set_owner_phone",
       "title": "Set Owner Phone",
-      "description": "Save the owner's own mobile number on the business record so Kai can ring it first and so activation/forwarding follow-ups can reach a human. A number is not fully set up until this is on file and forwarding is verified — connecting the number alone does not prove the owner can be reached. US numbers only; the number is normalized to E.164 and rejected if it cannot be validated as a US mobile/landline number. When ring_first is true (default), also configures ring-first routing so calls hit this cell before overflowing to the secretary — the same path used at signup.",
+      "description": "Call this BEFORE search_available_numbers/buy_number (#2086) — do not find or buy a number for someone who has not given a reachable number. Ask for it as \"the number I'll text you at whenever I take a call for you\", not as a generic form field. Saves the owner's own mobile number on the business record so Kai can ring it first and so activation/forwarding follow-ups can reach a human — connecting a number alone does not prove the owner can be reached. US numbers only; normalized to E.164 and rejected if it cannot be validated as a US mobile/landline number. When ring_first is true (default), also configures ring-first routing so calls hit this cell before overflowing to the secretary — the same path used at signup. If the caller declines to give a number, pass declined=true instead of owner_phone: this records the signup as an inquiry (a KaiCalls lead, not a provisioned business+number) and you must not call find_number/buy_number for this business afterward.",
       "scope": "agents:write",
       "acquisitionStep": "collect_owner_phone",
       "outputSchema": {
@@ -2927,27 +3018,22 @@
             "type": "string"
           },
           "owner_phone_masked": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
+          },
+          "owner_phone_present": {
+            "type": "boolean"
           },
           "ring_first_applied": {
             "type": "boolean"
           },
           "ring_first_status": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "next_step": {
             "type": "string"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2979,9 +3065,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -2994,7 +3078,7 @@
     {
       "name": "search_available_numbers",
       "title": "Search Available Numbers",
-      "description": "Search the carrier for phone numbers available to purchase (real-time Twilio inventory lookup). Mirrors GET /api/v1/phone-numbers/search.",
+      "description": "Search the carrier for phone numbers available to purchase (live number inventory). Mirrors GET /api/v1/phone-numbers/search. On the acquisition surface, call set_owner_phone first (or record a decline) — don't search or buy a number for a signup with no way to be reached.",
       "scope": "numbers:read",
       "acquisitionStep": "find_number",
       "outputSchema": {
@@ -3015,9 +3099,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3030,7 +3112,7 @@
     {
       "name": "buy_number",
       "title": "Buy Phone Number",
-      "description": "Request a real phone-number purchase. This is APPROVAL-GATED: the carrier bills immediately on execution, so the tool only prepares a request for authenticated owner review. Caller-supplied human_confirmed, dashboard_session, or system_policy fields never authorize execution. Relay the stored request and review URL to the owner; do not claim a number was purchased while approval is pending. Existing entitlement and carrier reservation checks still apply. Mirrors POST /api/v1/phone-numbers/purchase via numbers.purchase.",
+      "description": "Request a real phone-number purchase. This is APPROVAL-GATED: the carrier bills immediately on execution, so the tool only prepares a request for authenticated owner review. Caller-supplied human_confirmed, dashboard_session, or system_policy fields never authorize execution. Relay the stored request and review URL to the owner; do not claim a number was purchased while approval is pending. Existing entitlement and carrier reservation checks still apply. Mirrors POST /api/v1/phone-numbers/purchase via numbers.purchase. On the acquisition surface, set_owner_phone must run first (or record a decline) — never buy a number for a signup with no way to be reached.",
       "scope": "numbers:write",
       "acquisitionStep": "buy_number",
       "outputSchema": {
@@ -3048,58 +3130,32 @@
             "type": "string"
           },
           "code": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "business_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "request_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "risk_level": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "message": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "approval": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "summary": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "result": {
-            "type": [
-              "object",
-              "null"
-            ],
+            "type": ["object", "null"],
             "description": "On executed: { number, vapi_registered, agent_attached, compliance: { high_risk_category, disclosure_note } }."
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3133,9 +3189,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3163,15 +3217,10 @@
             "description": "Present when success is false"
           },
           "knowledge": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3204,9 +3253,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3233,15 +3280,10 @@
             "description": "Present when success is false"
           },
           "product": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3278,15 +3320,10 @@
             }
           },
           "version": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3323,9 +3360,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3338,7 +3373,7 @@
     {
       "name": "rollback_config",
       "title": "Rollback Agent Configuration",
-      "description": "Request a rollback to a prior assistant_config_versions snapshot. This changes live greeting, voice, prompt and model settings, so authenticated owner review of the exact stored request is required. Caller-supplied authority fields never authorize execution. Discover a target with list_config_versions or get_change_history; relay the pending request's review URL. The agent.config.rollback executor preserves version recording and secret exclusion after trusted approval.",
+      "description": "Request a rollback to a prior assistant_config_versions snapshot. This changes live greeting, voice, prompt and model settings. When the business owner or an admin is signed in through this connector, the rollback applies immediately; otherwise authenticated owner review of the exact stored request is required (the owner is notified with a review link). Caller-supplied authority fields never authorize execution. Discover a target with list_config_versions or get_change_history; relay the pending request's review URL. The agent.config.rollback executor preserves version recording and secret exclusion after trusted approval.",
       "scope": "agents:write",
       "acquisitionStep": "create_secretary",
       "outputSchema": {
@@ -3356,61 +3391,35 @@
             "type": "string"
           },
           "code": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "agent_id": {
             "type": "string"
           },
           "business_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "request_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "risk_level": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "message": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "approval": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "summary": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": ["object", "null"]
           },
           "result": {
-            "type": [
-              "object",
-              "null"
-            ],
+            "type": ["object", "null"],
             "description": "On executed: { agent_id, restored_from_version, restored_fields, skipped_fields, new_version_number, warning? }."
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3455,17 +3464,12 @@
                 "type": "boolean"
               },
               "next_cursor": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               }
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3478,7 +3482,7 @@
     {
       "name": "list_tool_execution_logs",
       "title": "List Tool Execution Logs",
-      "description": "List per-call Vapi tool execution traces from vapi_tool_execution_logs — outcome, latency, timeout, and a redacted result preview for each routed tool call. Mirrors GET /api/v1/tool-execution-logs. Answers \"did this tool call actually work\".",
+      "description": "List per-call voice-agent tool execution traces — outcome, latency, timeout, and a redacted result preview for each routed tool call. Mirrors GET /api/v1/tool-execution-logs. Answers \"did this tool call actually work\".",
       "scope": "events:read",
       "outputSchema": {
         "type": "object",
@@ -3501,9 +3505,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3539,9 +3541,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3577,9 +3577,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3615,9 +3613,7 @@
             }
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {
@@ -3659,9 +3655,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "success"
-        ],
+        "required": ["success"],
         "additionalProperties": true
       },
       "annotations": {

@@ -2,9 +2,9 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.kaicalls/kaicalls",
   "title": "KaiCalls",
-  "description": "AI phone answering for businesses: calls, transcripts, leads, voicemail, SMS, campaigns and setup.",
-  "version": "1.0.2",
-  "websiteUrl": "https://callmcp.ai?utm_source=mcp-registry",
+  "description": "AI receptionist + business phone line: get a number, answer missed calls, read calls, text leads.",
+  "version": "1.1.0",
+  "websiteUrl": "https://www.kaicalls.com?utm_source=mcp_registry&utm_medium=directory",
   "repository": {
     "url": "https://github.com/KaiCalls/kaicalls-mcp",
     "source": "github"
@@ -28,6 +28,10 @@
           "isSecret": true
         }
       ]
+    },
+    {
+      "type": "streamable-http",
+      "url": "https://www.kaicalls.com/api/mcp/acquisition"
     }
   ]
 }
