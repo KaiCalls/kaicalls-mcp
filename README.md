@@ -81,6 +81,18 @@ with a `405`. Once saved, Cline lists the KaiCalls tools and is ready to use. Se
 
 ---
 
+## Run locally over stdio (Docker)
+
+Most clients should connect to the hosted server at `https://www.kaicalls.com/api/mcp`. For stdio-only clients, this repo ships a small bridge with no dependencies:
+
+```bash
+docker build -t kaicalls-mcp .
+docker run -i --rm -e KAICALLS_API_KEY=kc_live_... kaicalls-mcp
+# or without Docker: KAICALLS_API_KEY=kc_live_... node stdio-proxy.mjs
+```
+
+`initialize` and `tools/list` work without a key. `tools/call` needs `KAICALLS_API_KEY`, which you create at https://www.kaicalls.com/dashboard/settings/api-keys.
+
 ## Tools
 
 The account endpoint exposes 79 tools: 43 read-only and 36 write/setup. Every tool carries MCP
