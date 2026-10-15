@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.kaicalls/kaicalls",
   "title": "KaiCalls",
-  "description": "AI receptionist + business phone line: get a number, answer missed calls, read calls, text leads.",
+  "description": "A business phone line with a secretary: get a number, answer missed calls, take messages, read calls.",
   "version": "1.1.0",
   "websiteUrl": "https://www.kaicalls.com?utm_source=mcp_registry&utm_medium=directory",
   "repository": {

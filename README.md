@@ -1,6 +1,6 @@
 # KaiCalls MCP Server
 
-> **AI receptionist + business phone line: get a number, answer missed calls, read calls, text leads.**
+> **A business phone line with a secretary: get a number, answer missed calls, take messages, read calls.**
 
 Get a business number (or keep yours) with Kai built in. Your phones ring first; Kai
 answers misses and after-hours calls, takes the details and texts you. See
@@ -125,7 +125,7 @@ input schema.
 | `get_webhook` | `webhooks:read` |  | List the configured outbound webhook(s) for a business, including supported event types. |
 | `list_evals` | `evals:read` |  | List canned mock-conversation eval scenarios for an agent (or all accessible agents). |
 | `list_voices` | `agents:read` | Yes | List the curated, credential-free voice catalog (id, display name, accent, language, gender, sample URL) used to configure agent voices. |
-| `search_available_numbers` | `numbers:read` | Yes | Search the carrier for phone numbers available to purchase (real-time Twilio inventory lookup). |
+| `search_available_numbers` | `numbers:read` | Yes | Search the carrier for phone numbers available to purchase (real-time inventory lookup). |
 | `list_knowledge` | `knowledge:read` | Yes | List agent knowledge base entries for a business. |
 | `list_products` | `products:read` |  | List a business's agent product catalog. |
 | `list_config_versions` | `agents:read` | Yes | List an agent's hashed, redacted assistant config version history (rollback lineage included). |
