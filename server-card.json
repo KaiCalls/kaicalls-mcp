@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "KaiCalls",
     "version": "1.1.0",
-    "description": "AI receptionist + business phone line: get a number, answer missed calls, read calls, text leads."
+    "description": "A business phone line with a secretary: get a number, answer missed calls, take messages, read calls."
   },
   "provider": {
     "organization": "KaiCalls",
