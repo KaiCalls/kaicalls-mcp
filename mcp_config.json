@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "kaicalls": {
+      "serverUrl": "https://www.kaicalls.com/api/mcp"
+    }
+  }
+}

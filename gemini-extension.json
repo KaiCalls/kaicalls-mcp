@@ -1,0 +1,14 @@
+{
+  "name": "kaicalls",
+  "version": "1.1.0",
+  "description": "A business phone line with a secretary: get a number, answer missed calls, take messages, read calls.",
+  "contextFileName": "GEMINI.md",
+  "mcpServers": {
+    "kaicalls": {
+      "httpUrl": "https://www.kaicalls.com/api/mcp",
+      "oauth": {
+        "enabled": true
+      }
+    }
+  }
+}

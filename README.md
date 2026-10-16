@@ -81,6 +81,16 @@ with a `405`. Once saved, Cline lists the KaiCalls tools and is ready to use. Se
 
 ---
 
+## Gemini CLI and Antigravity
+
+```bash
+gemini extensions install https://github.com/KaiCalls/kaicalls-mcp
+agy plugin install https://github.com/KaiCalls/kaicalls-mcp
+```
+
+Both connect to the hosted server at `https://www.kaicalls.com/api/mcp` and sign
+you in with OAuth the first time a tool runs.
+
 ## Run locally over stdio (Docker)
 
 Most clients should connect to the hosted server at `https://www.kaicalls.com/api/mcp`. For stdio-only clients, this repo ships a small bridge with no dependencies:
