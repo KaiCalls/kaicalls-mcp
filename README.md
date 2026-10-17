@@ -18,7 +18,7 @@ connect to the live endpoint below with your KaiCalls account.
 | **Transport** | Streamable HTTP (JSON-RPC over HTTP POST) |
 | **Auth** | OAuth 2.1 (PKCE S256 + DCR) **or** `kc_live_` API key as Bearer |
 | **Setup endpoint** | `https://www.kaicalls.com/api/mcp/acquisition` (setup-only subset for first-time buyers) |
-| **Tools** | 79 on the account endpoint (43 read-only, 36 write/setup); 37 on the setup endpoint |
+| **Tools** | 87 on the account endpoint (46 read-only, 41 write/setup); 37 on the setup endpoint |
 | **Homepage** | [KaiCalls](https://www.kaicalls.com?utm_source=mcp_registry&utm_medium=directory) |
 | **Provider** | [KaiCalls](https://www.kaicalls.com) · connor@kaicalls.com |
 | **License** | [MIT](LICENSE) (connector definitions and docs) |
@@ -105,7 +105,7 @@ docker run -i --rm -e KAICALLS_API_KEY=kc_live_... kaicalls-mcp
 
 ## Tools
 
-The account endpoint exposes 79 tools: 43 read-only and 36 write/setup. Every tool carries MCP
+The account endpoint exposes 87 tools: 46 read-only and 41 write/setup. Every tool carries MCP
 safety annotations (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`).
 The setup endpoint (`/api/mcp/acquisition`) exposes the 37 tools marked Yes in the
 **Setup surface** column, the subset that takes a new business from signup to a working number.
@@ -114,7 +114,7 @@ The machine-readable inventory, with full descriptions, scopes and annotations, 
 tools are in [`docs/tools.md`](docs/tools.md). The live `tools/list` response returns each tool's
 input schema.
 
-### Read-only tools (43)
+### Read-only tools (46)
 
 | Tool | Scope | Setup surface | What it does |
 |------|-------|:-------------:|--------------|
@@ -161,8 +161,11 @@ input schema.
 | `get_setup_checklist` | `workspaces:read` |  | Where one business stands on its plan, phone number, texting registration, WhatsApp, call and lead alert inboxes, and sending email as the business from its own Gmail. |
 | `get_whatsapp_status` | `sms:read` |  | Check whether WhatsApp is connected on a business's KaiCalls number, read live from the carrier. |
 | `get_channel_status` | `sms:read` |  | List every customer channel a business can have (phone calls, text messages, WhatsApp, website chat, email, and the ones not offered yet) with its state: ready, needs_setup, blocked or not_available. |
+| `get_meeting` | `agents:read` |  | List the meetings Kai was sent into (newest first), or one meeting by id with its live status, minutes used and summary, plus the plan's remaining meeting minutes this month. |
+| `get_email_campaign` | `emails:read` |  | Read a business's email campaigns: its sending addresses and their setup readiness, recent campaigns with status, revision fingerprint and outcome counts, and the customers who can be emailed (recorded consent, not on the do-not-email list). |
+| `get_trust_level` | `agents:read` |  | Read one accessible business's trust level (Sprout, Verified, Trusted, Pro, Partner): the current level, the steps to the next one with progress, what each level unlocks, today's outbound call and text use against the limits the level allows, and any hold. |
 
-### Write and setup tools (36)
+### Write and setup tools (41)
 
 | Tool | Scope | Setup surface | Hints | What it does |
 |------|-------|:-------------:|-------|--------------|
@@ -202,6 +205,11 @@ input schema.
 | `create_customer_workspace` | `workspaces:write` |  | open-world | Create a KaiCalls workspace for a business, owned by the business owner's own email (for a partner setting up a customer, or anyone setting up a business for its owner). |
 | `set_up_business` | `workspaces:write` |  | idempotent | Optional line customization: use only when the owner explicitly asks Kai to answer with a business name and greeting. |
 | `connect_whatsapp` | `sms:write` |  | idempotent · open-world | Get the one link a business owner opens to put WhatsApp on their KaiCalls number. |
+| `join_meeting` | `agents:write` |  | idempotent · open-world | Send Kai into a Zoom, Google Meet, Microsoft Teams or Webex meeting by its link. |
+| `leave_meeting` | `agents:write` |  | idempotent · open-world | Have Kai leave a meeting it is in (or stop trying to join). |
+| `send_message` | `sms:write` |  | destructive · open-world | Send one message to a business's customer on the channel you choose: a text (sms) from one of the business's agent lines, or a WhatsApp message from its connected WhatsApp number. |
+| `email_campaign` | `emails:write` |  | destructive · open-world | Email a business's customers. |
+| `set_conversation_owner` | `sms:write` |  | idempotent | Set who answers a customer's text conversation. |
 
 > **Write-tool safety.** Tools marked destructive change live business configuration
 > or reach the outside world: `make_call` places an outbound voice preview, `send_sms`
