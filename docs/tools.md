@@ -1,8 +1,8 @@
 # KaiCalls MCP — Tool Catalog
 
-The account endpoint exposes 79 tools (43 read-only, 36 write/setup). This page
+The account endpoint exposes 87 tools (46 read-only, 41 write/setup). This page
 covers the 18 core call, lead and operational-setup tools in depth. The full list of
-all 79 tools, with scope, safety hints and a one-line description, is in the
+all 87 tools, with scope, safety hints and a one-line description, is in the
 [README](../README.md#tools). Every surface that advertises the KaiCalls inventory
 (this repo, `/.well-known/mcp.json`, the server card, and the live `tools/list`) is
 derived from one source of truth, so descriptions and safety annotations never drift.

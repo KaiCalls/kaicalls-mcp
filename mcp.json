@@ -58,9 +58,16 @@
         "send_sms",
         "update_agent_config",
         "request_kaicalls_update",
+        "join_meeting",
+        "get_meeting",
+        "leave_meeting",
         "get_usage",
         "list_plans",
         "get_checkout_status",
+        "send_message",
+        "email_campaign",
+        "get_email_campaign",
+        "set_conversation_owner",
         "get_text_registration",
         "save_text_registration_details",
         "start_text_registration_checkout",
@@ -71,6 +78,7 @@
         "connect_whatsapp",
         "get_whatsapp_status",
         "get_channel_status",
+        "get_trust_level",
         "get_balance",
         "create_checkout",
         "list_numbers",
@@ -299,10 +307,16 @@
             "type": "object",
             "properties": {
               "id": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "conversation_id": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "status": {
                 "type": "string"
@@ -314,7 +328,10 @@
                 "type": "string"
               },
               "lead_id": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "to": {
                 "type": "string"
@@ -322,7 +339,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -355,34 +374,59 @@
                 "type": "string"
               },
               "conversation_id": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "status": {
                 "type": "string"
               },
               "duration_seconds": {
-                "type": ["number", "null"]
+                "type": [
+                  "number",
+                  "null"
+                ]
               },
               "agent_id": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "agent_name": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "business_id": {
                 "type": "string"
               },
               "lead_id": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "summary": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "recording_url": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "quality_dimensions": {
-                "type": ["object", "array", "null"]
+                "type": [
+                  "object",
+                  "array",
+                  "null"
+                ]
               },
               "created_at": {
                 "type": "string"
@@ -390,7 +434,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -435,13 +481,18 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "filters": {
             "type": "object"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -474,7 +525,10 @@
             "type": "boolean"
           },
           "transcript": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "transcript_truncated": {
             "type": "boolean"
@@ -483,7 +537,9 @@
             "type": "integer"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -519,22 +575,37 @@
                 "type": "string"
               },
               "conversation_id": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "status": {
                 "type": "string"
               },
               "duration_seconds": {
-                "type": ["number", "null"]
+                "type": [
+                  "number",
+                  "null"
+                ]
               },
               "recording_url": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "agent_id": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "agent_name": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "business_id": {
                 "type": "string"
@@ -545,7 +616,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -591,13 +664,18 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "filters": {
             "type": "object"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -634,7 +712,9 @@
             "type": "integer"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -665,7 +745,10 @@
             "type": "object"
           },
           "notification_settings": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "business_links": {
             "type": "array",
@@ -686,7 +769,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -723,13 +808,18 @@
             "type": "boolean"
           },
           "current_settings": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "proposed_settings": {
             "type": "object"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -742,7 +832,7 @@
     {
       "name": "get_activation_status",
       "title": "Get Activation Status",
-      "description": "Read the persisted proof-first activation status for one accessible business. Returns masked evidence, the exact next action, and whether the command center/full MCP surface is unlocked. It cannot assert or advance proof. A number is not fully set up until the owner's own phone is on file (see owner_phone_on_file) and forwarding is verified — do not report the line as live/working on the strength of proof state alone.",
+      "description": "Read current call readiness and persisted private-test proof for one accessible business. Only a currently entitled owner with a coherent assigned number gets the existing private-test setup link. Missing entitlement, incomplete setup or stale sessions do not authorize a call. It cannot assert or advance proof. A completed private test is separate from customer-route coverage; forwarding is optional and does not define whether the assigned phone works.",
       "scope": "agents:read",
       "acquisitionStep": "confirm_live",
       "outputSchema": {
@@ -760,20 +850,29 @@
             "type": "string"
           },
           "activation_session_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "state": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "next_action": {
             "type": "string"
+          },
+          "call_readiness": {
+            "type": "object"
           },
           "command_center_unlocked": {
             "type": "boolean"
           },
           "owner_phone_on_file": {
             "type": "boolean",
-            "description": "Whether the owner's own mobile number is on file. False means no SMS nudge, ring-first, or forwarding verification can reach a human — the line is not fully set up regardless of proof state."
+            "description": "Whether the owner's own mobile number is on file for SMS alerts or ring-first. Its absence does not invalidate an email-confirmed private test or require forwarding."
           },
           "proof": {
             "type": "object"
@@ -791,10 +890,15 @@
             }
           },
           "activation_receipt": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -831,16 +935,24 @@
             "type": "string"
           },
           "destination_masked": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "delivery_started": {
             "type": "boolean"
           },
           "attempt": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -877,10 +989,15 @@
             "type": "string"
           },
           "attempt": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -893,7 +1010,7 @@
     {
       "name": "choose_customer_route",
       "title": "Choose Customer Route",
-      "description": "APPROVAL-GATED. After setup proof is complete, save forwarding, published_number, both, or testing. This unlocks the command center but does not claim customer coverage; selected live routes remain pending until independently verified. A number is not fully set up until the owner's own phone is on file (see get_activation_status / set_owner_phone) and forwarding is verified.",
+      "description": "APPROVAL-GATED. After private-test proof is complete, save forwarding, published_number, both, or testing. This unlocks the command center but does not claim customer coverage; selected customer routes remain pending until independently verified. Forwarding is optional; testing keeps the existing private-test result without connecting a customer route.",
       "scope": "numbers:write",
       "acquisitionStep": "confirm_live",
       "outputSchema": {
@@ -938,7 +1055,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -984,7 +1103,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1015,34 +1136,63 @@
             "type": "string"
           },
           "code": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "business_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "agent_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "section_title": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "rules_count": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "request_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "approval": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "summary": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "result": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1087,13 +1237,18 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "filters": {
             "type": "object"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1123,7 +1278,9 @@
             "type": "object"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1168,10 +1325,15 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1216,13 +1378,18 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "filters": {
             "type": "object"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1267,13 +1434,18 @@
             "type": "boolean"
           },
           "next_offset": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "filters": {
             "type": "object"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1306,16 +1478,27 @@
             "type": "boolean"
           },
           "sequence_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "queued": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "total_leads": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1360,7 +1543,9 @@
             "type": "string"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1405,7 +1590,9 @@
             "type": "integer"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1436,22 +1623,36 @@
             "description": "create or update"
           },
           "lead": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "updated": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "failed": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "results": {
-            "type": ["array", "null"],
+            "type": [
+              "array",
+              "null"
+            ],
             "items": {
               "type": "object"
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1478,16 +1679,27 @@
             "description": "Present when success is false"
           },
           "message_sid": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "to": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "from": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1518,34 +1730,63 @@
             "type": "string"
           },
           "code": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "business_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "agent_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "request_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "risk_level": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "message": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "approval": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "summary": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "result": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1574,45 +1815,179 @@
             "type": "string"
           },
           "code": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "intent": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "business_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "request_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "risk_level": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "message": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "approval": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "summary": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "missing_fields": {
-            "type": ["array", "null"],
+            "type": [
+              "array",
+              "null"
+            ],
             "items": {
               "type": "string"
             }
           },
           "result": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
         "readOnlyHint": false,
         "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "join_meeting",
+      "title": "Send Kai Into a Meeting",
+      "description": "Send Kai into a Zoom, Google Meet, Microsoft Teams or Webex meeting by its link. Kai joins under the agent name, takes notes, and emails the owner a summary when the meeting ends. If the meeting has a waiting room, the host must admit Kai. In the default listen mode it answers out loud when someone says its name and counts against the plan's monthly meeting minutes; avatar mode joins with a talking video face and counts one avatar meeting. Mirrors POST /api/v1/meetings.",
+      "scope": "agents:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "meeting": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_meeting",
+      "title": "Get Meetings",
+      "description": "List the meetings Kai was sent into (newest first), or one meeting by id with its live status, minutes used and summary, plus the plan's remaining meeting minutes this month. Mirrors GET /api/v1/meetings.",
+      "scope": "agents:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "meetings": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "allowance": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "leave_meeting",
+      "title": "Take Kai Out of a Meeting",
+      "description": "Have Kai leave a meeting it is in (or stop trying to join). The notes taken so far are kept. Mirrors DELETE /api/v1/meetings.",
+      "scope": "agents:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "meeting": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
         "idempotentHint": true,
         "openWorldHint": true
       }
@@ -1644,7 +2019,9 @@
             "type": "boolean"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1678,7 +2055,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1715,11 +2094,276 @@
             "type": "boolean"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
         "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "send_message",
+      "title": "Send Message",
+      "description": "Send one message to a business's customer on the channel you choose: a text (sms) from one of the business's agent lines, or a WhatsApp message from its connected WhatsApp number. The same consent, Do-Not-Call, quiet-hours and rate gates as the dashboard apply, and a refusal says which one. sms needs from_agent_id; whatsapp needs a number the owner connected to WhatsApp (pass from when there is more than one) and a customer who messaged that number in the last 24 hours. Email is not sent here: use email_campaign, which drafts a campaign the owner reviews and approves. Pass business_id when the account has more than one business. Never claim a message was delivered from this result: it reports that the provider accepted it.",
+      "scope": "sms:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "channel": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "to": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "from": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "provider": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "replayed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "email_campaign",
+      "title": "Email Campaign",
+      "description": "Email a business's customers. Email always goes out as a campaign the business owner reviews and approves, from the business's own verified sending domain, only to customers with recorded email consent who are not on the do-not-email list, and only as many a day as the business's Kai level allows (see /dashboard/level). Steps, by action: request_sender (domain, from, reply_to) creates the sending domain (a subdomain the business controls) and returns the DNS records to add; check_sender (sender_id) re-checks those records now, and the sender turns ready on its own once they verify; record_consent (lead_id and email, or emails, plus evidence_ref saying where the permission came from, e.g. 'web form opt-in') records email permission for existing customers, and revoke_consent takes it back; draft (sender_id, subject, text, lead_ids, optional daily_limit) saves a campaign for review and returns its campaign id and fingerprint; approve (campaign_id, fingerprint) is the owner approving that exact revision; launch (campaign_id) queues an approved campaign; cancel (campaign_id, fingerprint) stops it. check_sender needs any member; request_sender, record_consent, revoke_consent and draft need an admin of the business; approve, launch and cancel need the business owner. Nothing is sent by request_sender, draft or approve. Use get_email_campaign to see senders, campaigns and the customers who can be emailed. Never claim an email was delivered from this result.",
+      "scope": "emails:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "action": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "senderId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fingerprint": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_email_campaign",
+      "title": "Get Email Campaign",
+      "description": "Read a business's email campaigns: its sending addresses and their setup readiness, recent campaigns with status, revision fingerprint and outcome counts, and the customers who can be emailed (recorded consent, not on the do-not-email list). Pass campaign_id for one campaign, or sender_id for the DNS records that sending address's domain needs. Read-only; any member of the business can read.",
+      "scope": "emails:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "senders": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "campaigns": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "audience": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "set_conversation_owner",
+      "title": "Set Conversation Owner",
+      "description": "Set who answers a customer's text conversation. owner 'ai' (the default): Kai replies. 'human': Kai stays quiet and the business owner answers. 'external': Kai stays quiet and the business's own system answers; it receives the sms.received webhook and replies with send_message or POST /v1/messages. With external_reply_timeout_seconds (external only, 60 to 86400), Kai answers a message nothing replied to in that time. Messages are always stored and sms.received always fires. Pass conversation_id for one conversation, or phone for every conversation the business has with that customer. Re-sending the same owner changes nothing.",
+      "scope": "sms:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "conversation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "owner": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "owner_set_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "external_reply_timeout_seconds": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "conversations": {
+            "type": "array"
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
         "destructiveHint": false,
         "idempotentHint": true,
         "openWorldHint": false
@@ -1742,7 +2386,10 @@
             "description": "Present when success is false"
           },
           "registration": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "chasers": {
             "type": "object"
@@ -1760,7 +2407,10 @@
             }
           },
           "next_question": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "ein_on_file": {
             "type": "boolean"
@@ -1775,7 +2425,9 @@
             "type": "string"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1835,7 +2487,9 @@
             "type": "string"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1880,7 +2534,9 @@
             "type": "boolean"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1913,7 +2569,9 @@
             "type": "boolean"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1946,13 +2604,22 @@
             "type": "string"
           },
           "checkout_url": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "joined_as_admin": {
             "type": "boolean"
+          },
+          "partner_linked": {
+            "type": "boolean",
+            "description": "Present for a partner-scoped key: the new business is linked to the partner."
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -1994,7 +2661,9 @@
             "type": "boolean"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2024,7 +2693,9 @@
             "type": "object"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2057,7 +2728,9 @@
             "type": "boolean"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2093,7 +2766,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2135,11 +2810,20 @@
                 },
                 "availability": {
                   "type": "string",
-                  "enum": ["live", "built_off", "planned"]
+                  "enum": [
+                    "live",
+                    "built_off",
+                    "planned"
+                  ]
                 },
                 "state": {
                   "type": "string",
-                  "enum": ["ready", "needs_setup", "blocked", "not_available"]
+                  "enum": [
+                    "ready",
+                    "needs_setup",
+                    "blocked",
+                    "not_available"
+                  ]
                 },
                 "canSend": {
                   "type": "boolean"
@@ -2148,13 +2832,18 @@
                   "type": "boolean"
                 },
                 "nextStep": {
-                  "type": ["object", "null"]
+                  "type": [
+                    "object",
+                    "null"
+                  ]
                 }
               }
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2162,6 +2851,109 @@
         "destructiveHint": false,
         "idempotentHint": true,
         "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_trust_level",
+      "title": "Get Trust Level",
+      "description": "Read one accessible business's trust level (Sprout, Verified, Trusted, Pro, Partner): the current level, the steps to the next one with progress, what each level unlocks, today's outbound call and text use against the limits the level allows, and any hold. focus 'ladder' walks every level; focus 'level' with level explains one. recheck=true re-reads live activity (card on file, paid bills, days active, real customer calls) instead of the saved level, the same recompute the dashboard runs when its copy is stale. Levels are earned, never set: no tool can raise one.",
+      "scope": "agents:read",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "business_id": {
+            "type": "string"
+          },
+          "level": {
+            "type": "object"
+          },
+          "next": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "next_opens_later": {
+            "type": "boolean"
+          },
+          "quests": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "progress": {
+            "type": "number"
+          },
+          "held": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ladder": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "meters": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "detail": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "rechecked": {
+            "type": "boolean"
+          },
+          "moved": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "up",
+              "down",
+              null
+            ]
+          },
+          "previous_level": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "computed_at": {
+            "type": "string"
+          },
+          "line": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
       }
     },
     {
@@ -2200,7 +2992,10 @@
                 },
                 "allowance_model": {
                   "type": "string",
-                  "enum": ["minutes", "answered_calls"]
+                  "enum": [
+                    "minutes",
+                    "answered_calls"
+                  ]
                 },
                 "minutes_used": {
                   "type": "number"
@@ -2209,19 +3004,31 @@
                   "type": "number"
                 },
                 "answered_calls_used": {
-                  "type": ["number", "null"],
+                  "type": [
+                    "number",
+                    "null"
+                  ],
                   "description": "Raw billable call count used for allowance reporting, matching dashboard and right-sizing; null for minute plans."
                 },
                 "answered_calls_raw": {
-                  "type": ["number", "null"],
+                  "type": [
+                    "number",
+                    "null"
+                  ],
                   "description": "Unweighted billable call count for reporting."
                 },
                 "answered_calls_weighted": {
-                  "type": ["number", "null"],
+                  "type": [
+                    "number",
+                    "null"
+                  ],
                   "description": "Informational only, not allowance consumption or right-sizing: ordinary calls 1, human-answered silent-listen calls 0.5; null for minute plans."
                 },
                 "answered_calls_allowance": {
-                  "type": ["number", "null"]
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "phone_numbers": {
                   "type": "integer",
@@ -2240,12 +3047,18 @@
                   "type": "string"
                 },
                 "period_end": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "Null for lifetime trial usage; does not imply the trial cannot expire."
                 },
                 "period_kind": {
                   "type": "string",
-                  "enum": ["lifetime_trial", "billing_cycle"]
+                  "enum": [
+                    "lifetime_trial",
+                    "billing_cycle"
+                  ]
                 }
               },
               "required": [
@@ -2271,7 +3084,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2297,7 +3112,7 @@
     {
       "name": "list_numbers",
       "title": "List Phone Numbers",
-      "description": "List phone numbers assigned to the accessible business(es), with capability and compliance flags. Assignment does not prove inbound routing, activation, or customer coverage — and a number is not fully set up until the owner's own phone is on file (see get_activation_status / set_owner_phone) and forwarding is verified. Mirrors GET /api/v1/numbers.",
+      "description": "List phone numbers assigned to the accessible business(es), with capability and compliance flags. Assignment does not prove a successful inbound test or customer coverage. Use get_activation_status to read current readiness and private-test proof. Forwarding is an optional customer route. Mirrors GET /api/v1/numbers.",
       "scope": "numbers:read",
       "acquisitionStep": "confirm_live",
       "outputSchema": {
@@ -2318,7 +3133,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2353,7 +3170,10 @@
             "description": "One-sentence plain-English description."
           },
           "line": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "kai_extension": {
             "type": "string"
@@ -2362,7 +3182,9 @@
             "type": "boolean"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2402,7 +3224,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2442,7 +3266,10 @@
             "type": "object"
           },
           "line": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "The phone-system line (E.164), if a number is attached."
           },
           "created": {
@@ -2473,7 +3300,10 @@
           },
           "required_field": {
             "type": "string",
-            "enum": ["business_address", "owner_mobile"],
+            "enum": [
+              "business_address",
+              "owner_mobile"
+            ],
             "description": "Present when setup is blocked on a missing input."
           },
           "next_action": {
@@ -2496,7 +3326,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2530,22 +3362,33 @@
             "type": "boolean"
           },
           "provisioned_at": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "kai_extension": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "ids": {
             "type": "object"
           },
           "line": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "next_step": {
             "type": "string"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2582,18 +3425,28 @@
                 "type": "string"
               },
               "name": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "role": {
                 "type": "string"
               },
               "ring_group": {
                 "type": "string",
-                "enum": ["added", "already_member"]
+                "enum": [
+                  "added",
+                  "already_member"
+                ]
               },
               "admin_roster": {
                 "type": "string",
-                "enum": ["registered", "skipped_member_role", "failed"]
+                "enum": [
+                  "registered",
+                  "skipped_member_role",
+                  "failed"
+                ]
               }
             }
           },
@@ -2602,7 +3455,9 @@
             "description": "Present when success is false."
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2638,7 +3493,9 @@
             "type": "boolean"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2668,7 +3525,9 @@
             "type": "object"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2710,7 +3569,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2743,7 +3604,10 @@
             "type": "object"
           },
           "webhook_secret": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "events": {
             "type": "array",
@@ -2755,7 +3619,9 @@
             "type": "string"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2788,7 +3654,9 @@
             "type": "string"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2821,7 +3689,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2848,31 +3718,58 @@
             "description": "Present when success is false"
           },
           "run_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "vapi_run_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "status": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "passed": {
-            "type": ["boolean", "null"]
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "results": {
-            "type": ["array", "object", "null"]
+            "type": [
+              "array",
+              "object",
+              "null"
+            ]
           },
           "total": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "completed": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "failed": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2906,7 +3803,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2948,7 +3847,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -2982,7 +3883,9 @@
             "type": "object"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3016,7 +3919,10 @@
             "type": "string"
           },
           "owner_phone_masked": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "owner_phone_present": {
             "type": "boolean"
@@ -3025,13 +3931,18 @@
             "type": "boolean"
           },
           "ring_first_status": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "next_step": {
             "type": "string"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3063,7 +3974,9 @@
             "type": "string"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3097,7 +4010,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3128,32 +4043,58 @@
             "type": "string"
           },
           "code": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "business_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "request_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "risk_level": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "message": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "approval": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "summary": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "result": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "description": "On executed: { number, vapi_registered, agent_attached, compliance: { high_risk_category, disclosure_note } }."
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3187,7 +4128,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3215,10 +4158,15 @@
             "description": "Present when success is false"
           },
           "knowledge": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3251,7 +4199,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3278,10 +4228,15 @@
             "description": "Present when success is false"
           },
           "product": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3318,10 +4273,15 @@
             }
           },
           "version": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3358,7 +4318,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3389,35 +4351,61 @@
             "type": "string"
           },
           "code": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "agent_id": {
             "type": "string"
           },
           "business_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "request_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "risk_level": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "message": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "approval": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "summary": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "result": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "description": "On executed: { agent_id, restored_from_version, restored_fields, skipped_fields, new_version_number, warning? }."
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3462,12 +4450,17 @@
                 "type": "boolean"
               },
               "next_cursor": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3503,7 +4496,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3539,7 +4534,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3575,7 +4572,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3611,7 +4610,9 @@
             }
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3653,7 +4654,9 @@
             "type": "boolean"
           }
         },
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "additionalProperties": true
       },
       "annotations": {
@@ -3665,5 +4668,7 @@
     }
   ],
   "protocol": "MCP",
-  "transports": ["streamable-http"]
+  "transports": [
+    "streamable-http"
+  ]
 }
