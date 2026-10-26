@@ -38,11 +38,18 @@ KaiCalls dashboard under **Settings → API Keys**.
 
 | Scope | Grants |
 |-------|--------|
-| `agents:read` | `list_agents`, `get_business_info`, `get_operational_settings` |
-| `calls:read` | call/lead/voicemail/SMS/campaign reads, `get_call_recording`, `get_analytics` |
-| `calls:write` | `make_call` |
-| `agents:write` | operational setup tools (`configure_staff_alerts`, `configure_textable_links`, `configure_agent_business_rules`) and `request_kaicalls_update` agent intents |
-| `numbers:write`, `webhooks:write` | `request_kaicalls_update` for E911 and transcript webhook intents |
+| `agents:read` | `list_agents`, `get_business_info`, `get_operational_settings`, `get_trust_level`, `recheck_trust_level`, config history |
+| `calls:read` | call/lead/voicemail/campaign reads, `get_call_recording`, `get_analytics`, Google Local Services reads |
+| `sms:read` | `list_sms_messages`, conversations, WhatsApp and channel status |
+| `calls:write` | `make_call`, `create_campaign`, `launch_call_campaign`, `pause_call_campaign` |
+| `agents:write` | operational setup tools (`configure_staff_alerts`, `configure_textable_links`, `configure_agent_business_rules`), `request_agent_update`, `request_config_rollback` |
+| `numbers:write` | number setup tools, `request_emergency_address`, `request_number_purchase` |
+| `webhooks:write` | `set_webhook`, `delete_webhook`, `request_transcript_webhook` |
+| `emails:read`, `emails:write` | `get_email_campaign`; the email sender, consent and campaign tools (`request_email_sender` through `cancel_email_campaign`) |
+| `workspaces:read`, `workspaces:write` | the setup checklist, business verification, customer workspaces, `get_agency_workspace` and the `agency_*` tools (the `agency_billing_*` tools use `billing:write` instead) |
+
+The exact scope of every tool is listed in [`../mcp.json`](../mcp.json) and the
+[README](../README.md#tools).
 
 A key only ever sees data for the business it is scoped to. Reads are bounded to that
 tenant (closed-world). Write/setup tools mutate live account configuration or place
