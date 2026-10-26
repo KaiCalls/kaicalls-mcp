@@ -1,8 +1,8 @@
 # KaiCalls MCP — Tool Catalog
 
-The account endpoint exposes 87 tools (46 read-only, 41 write/setup). This page
-covers the 18 core call, lead and operational-setup tools in depth. The full list of
-all 87 tools, with scope, safety hints and a one-line description, is in the
+The account endpoint exposes 171 tools (60 read-only, 111 write/setup). This page
+covers the 22 core call, lead and operational-setup tools in depth. The full list of
+all 171 tools, with scope, safety hints and a one-line description, is in the
 [README](../README.md#tools). Every surface that advertises the KaiCalls inventory
 (this repo, `/.well-known/mcp.json`, the server card, and the live `tools/list`) is
 derived from one source of truth, so descriptions and safety annotations never drift.
@@ -72,9 +72,12 @@ Recent voicemails, including transcripts and recording URLs.
 Inputs: `limit?` (1–100, default 20), `offset?`.
 `readOnly · idempotent`
 
-### `list_sms_messages` — `calls:read`
-Recent SMS messages. Filter by conversation or direction (inbound/outbound).
-Inputs: `limit?` (1–100, default 50), `offset?`, `conversation_id?`, `direction?`.
+### `list_sms_messages` — `sms:read`
+SMS and WhatsApp message evidence: provider message ID, carrier status,
+delivery/failure timestamps and failure code. Filter by business, conversation or
+direction (inbound/outbound). Provider acceptance is not delivery; use `delivered_at`
+and carrier status as evidence.
+Inputs: `limit?`, `offset?`, `business_id?`, `conversation_id?`, `direction?`.
 `readOnly · idempotent`
 
 ### `list_campaigns` — `calls:read`
@@ -90,10 +93,11 @@ Inputs: `days?` (1–90, default 30).
 
 ---
 
-## Core write/setup tools (5)
+## Core write/setup tools (9)
 
 ### `make_call` — `calls:write`
-Initiate a **real** outbound phone call via a KaiCalls AI agent.
+Place a **real** outbound phone call through a KaiCalls agent: a voice preview so the
+owner can hear Kai, or a call made on the owner's behalf with the task in context.
 Inputs: `agent_id` (required), `to` (required, E.164), `name?`, `context?`,
 `first_message?`, `lead_id?`.
 `destructive · open-world` — a real phone rings a real person, the agent speaks, and
@@ -124,16 +128,29 @@ Inputs: `agent_id` (required), `business_id?`, `section_title?`, `rules` (requir
 `queue_for_approval?`, `source_ref?`.
 `destructive · idempotent · open-world`
 
-### `request_kaicalls_update` — intent-specific write scope
-Governed on-behalf update broker. Supported intents:
-- `phone.emergency_address.set` — set an E911 emergency address.
-- `transcripts.sink.configure` — configure a transcript webhook sink.
-- `agent.patch` — patch agent config (prompt, voice, model, greeting, etc.).
+### Approval-gated changes — `request_*`
+Five tools make one kind of governed change each, on the owner's behalf. They replace
+the former single multi-intent update tool.
 
-Mutating requests require an `idempotency_key` (repeating a key returns the original
-outcome instead of re-running side effects). High-risk changes require human
-`authority`. The broker returns one of `needs_user_input`, `needs_approval`,
-`pending_approval`, `executed`, `denied`, or `unsupported` — **never an unaudited
-side effect**. Supports `dry_run` (validate without executing) and
-`queue_for_approval` (create a pending dashboard approval when authority is missing).
+| Tool | Scope | What it changes | Required inputs |
+|------|-------|-----------------|-----------------|
+| `request_emergency_address` | `numbers:write` | The emergency (E911) service address for one of the business's numbers, with the phone carrier. Replaces any address on file. | `phone_number`, `address`, `disclosure_acknowledged` (true after the owner reads the 911 notice), `idempotency_key` |
+| `request_transcript_webhook` | `webhooks:write` | Creates or updates a webhook that receives completed-call events (which can include transcripts) at a URL the business controls. A new webhook's signing secret is returned once. | `webhook_url`, `idempotency_key` |
+| `request_agent_update` | `agents:write` | A live agent's name, greeting, prompts, voice, model, call length or call transfer. For a direct edit by the owner, prefer `update_agent_config`. | `agent_id`, at least one field to change, `idempotency_key` |
+| `request_number_purchase` | `numbers:write` | Buys a specific available number (find one with `search_available_numbers`); the carrier bills it right away. Optionally connects it to `agent_id`. | `phone_number`, `idempotency_key` |
+| `request_config_rollback` | `agents:write` | Puts a live agent back on a saved earlier configuration (see `list_config_versions`). | `agent_id`, `version_number` or `version_id`, `idempotency_key` |
+
+Shared rules:
+- `idempotency_key` is required to make the change; repeating a key returns the first
+  outcome instead of running the change again.
+- The owner's confirmed approval goes in `authority`
+  (`{ mode: 'human_confirmed', confirmed_by, confirmed_at, confirmation_ref }`).
+  Without it the result is `needs_approval` and nothing changes.
+- `dry_run: true` checks access, inputs and approval without making the change;
+  `queue_for_approval: true` creates a pending approval the owner can accept in the
+  dashboard instead of returning `needs_approval`. `reason` is kept in the audit log.
+- Each returns `needs_user_input`, `needs_approval`, `pending_approval`, `executed`,
+  `denied` or `unsupported`. Only `executed` means the change was made — **never an
+  unaudited side effect**.
+
 `destructive · idempotent · open-world`

@@ -15,7 +15,7 @@ package to install or a command to run; the only step is editing the MCP client 
 | **MCP endpoint** | `https://www.kaicalls.com/api/mcp` |
 | **Transport** | Streamable HTTP (JSON-RPC over HTTP POST) |
 | **Auth** | OAuth 2.1 (PKCE S256 + DCR) **or** a `kc_live_` API key as a Bearer token |
-| **Tools** | 69 (39 read-only, 30 write/setup) |
+| **Tools** | 171 on the account endpoint (60 read-only, 111 write/setup); 37 on the setup endpoint |
 
 For agent-driven setup, prefer the **API-key** path — it requires no interactive OAuth
 browser round-trip.
