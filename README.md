@@ -1,6 +1,6 @@
 # KaiCalls MCP Server
 
-> **A business phone line with a secretary: get a number, answer missed calls, take messages, read calls.**
+> **A phone number for your business or your AI agent. Kai answers it and calls businesses for you.**
 
 Get a business number (or keep yours) with Kai built in. Your phones ring first; Kai
 answers misses and after-hours calls, takes the details and texts you. See
@@ -23,6 +23,16 @@ connect to the live endpoint below with your KaiCalls account.
 | **Provider** | [KaiCalls](https://www.kaicalls.com) · connor@kaicalls.com |
 | **License** | [MIT](LICENSE) (connector definitions and docs) |
 | **Status** | GA — live in production |
+
+---
+
+## Give your AI agent a phone number
+
+A person can connect ChatGPT, Claude or any MCP client and get a real US number:
+
+- **Kai calls businesses for you.** `make_call` places an errand call to a US or Canada business (a shop, clinic, office or restaurant), asks the question, presses keys on phone menus, and `check_call_status` returns the answer. Kai says up front that it is an assistant calling for you, and it does not place AI calls to personal cell phones.
+- **Kai answers the callback.** The business calls your own number back, and Kai takes the message.
+- **The first call for a new connector account is free.** After that, calls run on a plan: see [kaicalls.com/ai-agent-phone-number](https://www.kaicalls.com/ai-agent-phone-number?utm_source=mcp_registry&utm_medium=directory).
 
 ---
 
