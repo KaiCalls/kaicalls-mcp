@@ -5,8 +5,10 @@ The KaiCalls MCP server is **hosted** — nothing to install. Point any MCP clie
 
 ## Claude (web & desktop)
 
-1. **Settings → Connectors → Add custom connector.**
-2. URL: `https://www.kaicalls.com/api/mcp`
+1. **[Add KaiCalls to Claude in one click](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=KaiCalls&connectorUrl=https%3A%2F%2Fwww.kaicalls.com%2Fapi%2Fmcp)**
+   — this opens **Add custom connector** with the name and URL filled in. (By hand:
+   **Settings → Connectors → Add custom connector**, URL `https://www.kaicalls.com/api/mcp`.)
+2. Check the values and press **Add**.
 3. Connect → sign in with your KaiCalls account → on the consent screen pick the
    **business** to connect → **Allow**.
 4. Try: *"list my KaiCalls agents"*, *"show my recent calls"*, *"get the transcript
