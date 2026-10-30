@@ -52,7 +52,14 @@ A person can connect ChatGPT, Claude or any MCP client and get a real US number:
 
 ## Quick connect
 
-### Claude (web & desktop) / ChatGPT
+### Claude (web & desktop)
+**[Add KaiCalls to Claude in one click](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=KaiCalls&connectorUrl=https%3A%2F%2Fwww.kaicalls.com%2Fapi%2Fmcp)**:
+Claude opens its *Add custom connector* box with the name and URL already filled in.
+Press Add, then sign in. Owners of a Team or Enterprise workspace can use the
+[admin link](https://claude.ai/admin-settings/connectors?modal=add-custom-connector&connectorName=KaiCalls&connectorUrl=https%3A%2F%2Fwww.kaicalls.com%2Fapi%2Fmcp)
+to add it for everyone.
+
+### ChatGPT and other clients
 Add a custom connector pointing at `https://www.kaicalls.com/api/mcp` for an existing
 account, or the acquisition endpoint for setup. Sign in with your KaiCalls account,
 pick the business on the consent screen, and Allow. See
