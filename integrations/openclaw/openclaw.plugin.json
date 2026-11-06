@@ -1,0 +1,480 @@
+{
+  "id": "kaicalls",
+  "name": "KaiCalls",
+  "description": "KaiCalls for OpenClaw: give your agent a real phone number. Errand calls to businesses, texting, and a text channel.",
+  "version": "0.1.0",
+  "categories": [
+    "channels"
+  ],
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "apiKey": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "const": "env"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                  },
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+                  }
+                },
+                "required": [
+                  "source",
+                  "provider",
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "const": "store"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                  },
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+                  }
+                },
+                "required": [
+                  "source",
+                  "provider",
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "const": "file"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source",
+                  "provider",
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "const": "exec"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source",
+                  "provider",
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        ]
+      },
+      "baseUrl": {
+        "type": "string",
+        "format": "uri"
+      },
+      "agentId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "businessId": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "additionalProperties": false
+  },
+  "uiHints": {
+    "apiKey": {
+      "label": "KaiCalls API Key",
+      "sensitive": true
+    },
+    "baseUrl": {
+      "label": "KaiCalls Base URL"
+    },
+    "agentId": {
+      "label": "KaiCalls Agent ID",
+      "help": "UUID of the KaiCalls agent whose phone line sends replies."
+    },
+    "businessId": {
+      "label": "KaiCalls Business ID"
+    }
+  },
+  "configContracts": {
+    "secretInputs": {
+      "paths": [
+        {
+          "path": "apiKey",
+          "expected": "string"
+        }
+      ]
+    }
+  },
+  "activation": {
+    "onStartup": true,
+    "onCommands": [
+      "kaicalls"
+    ]
+  },
+  "channels": [
+    "kaicalls"
+  ],
+  "skills": [
+    "./skills"
+  ],
+  "cliCommands": [
+    {
+      "name": "kaicalls",
+      "description": "Connect KaiCalls texts to this OpenClaw Gateway",
+      "hasSubcommands": true
+    }
+  ],
+  "contracts": {
+    "tools": [
+      "kaicalls_make_call",
+      "kaicalls_call_status",
+      "kaicalls_answer_call_question",
+      "kaicalls_send_text",
+      "kaicalls_list_texts",
+      "kaicalls_list_calls",
+      "kaicalls_get_transcript",
+      "kaicalls_list_numbers"
+    ]
+  },
+  "channelConfigs": {
+    "kaicalls": {
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "apiKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "const": "env"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                      },
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+                      }
+                    },
+                    "required": [
+                      "source",
+                      "provider",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "const": "store"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                      },
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+                      }
+                    },
+                    "required": [
+                      "source",
+                      "provider",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "const": "file"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                      },
+                      "id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "source",
+                      "provider",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "const": "exec"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                      },
+                      "id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "source",
+                      "provider",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            ]
+          },
+          "baseUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "agentId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "businessId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "webhookSecret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "const": "env"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                      },
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+                      }
+                    },
+                    "required": [
+                      "source",
+                      "provider",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "const": "store"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                      },
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[A-Z][A-Z0-9_]{0,127}$"
+                      }
+                    },
+                    "required": [
+                      "source",
+                      "provider",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "const": "file"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                      },
+                      "id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "source",
+                      "provider",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "const": "exec"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                      },
+                      "id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "source",
+                      "provider",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            ]
+          },
+          "webhookPath": {
+            "type": "string"
+          },
+          "dmPolicy": {
+            "default": "pairing",
+            "type": "string",
+            "enum": [
+              "pairing",
+              "allowlist",
+              "open",
+              "disabled"
+            ]
+          },
+          "allowFrom": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "required": [
+          "dmPolicy"
+        ],
+        "additionalProperties": false
+      },
+      "label": "KaiCalls",
+      "description": "KaiCalls for OpenClaw: give your agent a real phone number. Errand calls to businesses, texting, and a text channel.",
+      "uiHints": {
+        "": {
+          "label": "KaiCalls",
+          "help": "Texts to your agent's KaiCalls number start an agent turn; replies are texted back."
+        },
+        "apiKey": {
+          "label": "KaiCalls API Key",
+          "sensitive": true
+        },
+        "baseUrl": {
+          "label": "KaiCalls Base URL"
+        },
+        "agentId": {
+          "label": "KaiCalls Agent ID",
+          "help": "UUID of the KaiCalls agent whose phone line sends replies."
+        },
+        "businessId": {
+          "label": "KaiCalls Business ID"
+        },
+        "webhookSecret": {
+          "label": "KaiCalls Webhook Secret",
+          "help": "Printed once by `openclaw kaicalls connect`.",
+          "sensitive": true
+        },
+        "webhookPath": {
+          "label": "KaiCalls Webhook Path"
+        },
+        "dmPolicy": {
+          "label": "KaiCalls DM Policy",
+          "help": "Who may text the agent (\"pairing\" recommended). \"open\" requires allowFrom=[\"*\"]."
+        },
+        "allowFrom": {
+          "label": "KaiCalls Allow From",
+          "help": "Allowed sender phone numbers in E.164 format, or * when dmPolicy is open.",
+          "presentation": "phone-number"
+        }
+      }
+    }
+  }
+}

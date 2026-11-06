@@ -1,0 +1,95 @@
+{
+  "name": "@kaicalls/kaicalls",
+  "version": "0.1.0",
+  "description": "KaiCalls for OpenClaw: give your agent a real phone number. Errand calls to businesses, texting, and a text channel.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KaiCalls/kaicalls-mcp.git",
+    "directory": "integrations/openclaw"
+  },
+  "homepage": "https://www.kaicalls.com/ai-agent-phone-number",
+  "keywords": [
+    "kaicalls",
+    "openclaw",
+    "sms",
+    "phone",
+    "calls",
+    "ai-agent",
+    "channel"
+  ],
+  "engines": {
+    "node": ">=24.16.0 <25 || >=26.1.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "manifest": "node scripts/build-manifest.mjs",
+    "typecheck": "tsc -p tsconfig.test.json",
+    "test": "vitest run --config ./vitest.config.ts",
+    "check": "npm run typecheck && npm test && npm run build && node scripts/build-manifest.mjs --check",
+    "prepack": "npm run build && node scripts/build-manifest.mjs --check"
+  },
+  "files": [
+    "dist",
+    "skills",
+    "assets/icon.png",
+    "openclaw.plugin.json",
+    "README.md"
+  ],
+  "dependencies": {
+    "typebox": "1.3.35",
+    "zod": "4.6.5"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.11.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "openclaw": "2026.11.1",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  },
+  "openclaw": {
+    "extensions": [
+      "./dist/index.js"
+    ],
+    "channel": {
+      "id": "kaicalls",
+      "label": "KaiCalls",
+      "selectionLabel": "KaiCalls (SMS)",
+      "detailLabel": "KaiCalls SMS/WhatsApp",
+      "docsPath": "/channels/kaicalls",
+      "docsLabel": "kaicalls",
+      "blurb": "Texts to your agent's KaiCalls number start a turn; replies are texted back.",
+      "order": 90,
+      "quickstartAllowFrom": true,
+      "configuredState": {
+        "env": {
+          "anyOf": [
+            "KAICALLS_API_KEY",
+            "KAICALLS_WEBHOOK_SECRET"
+          ]
+        }
+      }
+    },
+    "compat": {
+      "pluginApi": ">=2026.11.1",
+      "minGatewayVersion": "2026.11.1"
+    },
+    "build": {
+      "openclawVersion": "2026.11.1",
+      "pluginSdkVersion": "2026.11.1"
+    },
+    "install": {
+      "clawhubSpec": "clawhub:@kaicalls/kaicalls",
+      "npmSpec": "@kaicalls/kaicalls",
+      "defaultChoice": "npm",
+      "minHostVersion": ">=2026.11.1"
+    },
+    "release": {
+      "publishToClawHub": true,
+      "publishToNpm": true
+    }
+  }
+}

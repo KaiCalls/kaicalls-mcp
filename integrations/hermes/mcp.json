@@ -1,0 +1,12 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "kaicalls": {
+      "type": "streamable-http",
+      "url": "https://www.kaicalls.com/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${KAICALLS_API_KEY}"
+      }
+    }
+  }
+}
