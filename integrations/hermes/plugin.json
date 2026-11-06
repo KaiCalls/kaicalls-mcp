@@ -1,0 +1,31 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "kaicalls",
+  "version": "1.0.0",
+  "description": "Give your agent a real phone number. Kai calls businesses for you, texts people, and answers the callback. Hosted KaiCalls MCP server plus a skill; no Twilio account needed.",
+  "author": {
+    "name": "KaiCalls",
+    "email": "connor@kaicalls.com",
+    "url": "https://www.kaicalls.com"
+  },
+  "homepage": "https://www.kaicalls.com/ai-agent-phone-number?utm_source=hermes&utm_medium=plugin",
+  "repository": "https://github.com/KaiCalls/kaicalls-mcp",
+  "license": "MIT",
+  "keywords": ["phone", "calls", "sms", "telephony", "voice", "errands", "kaicalls"],
+  "extensions": {
+    "com.nousresearch.hermes": {
+      "config_schema": {
+        "api_key": {
+          "type": "secret",
+          "env": "KAICALLS_API_KEY",
+          "description": "KaiCalls API key (kc_live_...). Create one at kaicalls.com under Settings > API Keys."
+        }
+      },
+      "servers": {
+        "kaicalls": {
+          "trust": "untrusted"
+        }
+      }
+    }
+  }
+}

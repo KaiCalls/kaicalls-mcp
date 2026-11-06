@@ -50,6 +50,11 @@ A person can connect ChatGPT, Claude or any MCP client and get a real US number:
 
 ---
 
+## Agent frameworks
+
+- **OpenClaw:** [`integrations/openclaw`](integrations/openclaw) is the KaiCalls plugin. It adds 8 call and text tools, plus a `kaicalls` channel so texts to your agent's number start an agent turn. ClawHub publication is pending.
+- **Hermes Agent:** [`integrations/hermes`](integrations/hermes) is a portable Agent Plugins v1 package (the hosted MCP server plus a skill). Install it with `hermes plugins install https://github.com/KaiCalls/kaicalls-mcp/tree/main/integrations/hermes`.
+
 ## Quick connect
 
 ### Claude (web & desktop)

@@ -1,0 +1,22 @@
+# Draft entry for NousResearch/hermes-agent plugin-catalog/kaicalls.yaml.
+# Not submitted. Before opening the PR: set sha to the full 40-character commit on
+# KaiCalls/kaicalls-mcp main that contains integrations/hermes, and run
+# `hermes plugins validate <path> --install-deps`.
+name: kaicalls
+title: KaiCalls
+repo: https://github.com/KaiCalls/kaicalls-mcp
+sha: 0000000000000000000000000000000000000000
+subdir: integrations/hermes
+version: "1.0.0"
+description: "Give Hermes a real phone number: Kai calls businesses for the user (a pharmacy, clinic, shop, landlord, utility), asks the question, presses keys on phone menus and reports the answer; the same number sends texts and takes the callback. Hosted KaiCalls Streamable HTTP MCP server plus one skill (kaicalls:kaicalls). Portable Agent Plugins v1 package (plugin.json + mcp.json + skills/), no plugin code. Needs a KaiCalls account and API key (KAICALLS_API_KEY, declared as a secret); no Twilio account. Disclosure — hosted-only connector; call audio, transcripts, texts and phone numbers go to kaicalls.com; calls and texts after a new account's free first call count toward the user's paid KaiCalls plan; the server is marked trust: untrusted so every call or text asks the user first."
+maintainer: KaiCalls
+tier: community
+category: voice
+docs_url: https://github.com/KaiCalls/kaicalls-mcp/tree/main/integrations/hermes
+readme: true
+platforms: []
+capabilities:
+  provides_tools: []
+  provides_hooks: []
+  provides_middleware: []
+  requires_env: []
