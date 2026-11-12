@@ -196,13 +196,13 @@ input schema.
 | `search_available_numbers` | `numbers:read` | Yes | Search the carrier for phone numbers available to purchase (live number inventory). |
 | `list_knowledge` | `knowledge:read` | Yes | List agent knowledge base entries for a business. |
 | `list_products` | `products:read` |  | List a business's agent product catalog. |
-| `list_config_versions` | `agents:read` | Yes | List an agent's hashed, redacted assistant config version history (rollback lineage included). |
-| `get_change_history` | `agents:read` | Yes | List an agent's recent config-change audit trail (change_type, change_source, old/new value, timestamp) from admin_change_history — the same record the admin_get_change_history voice tool reads over the phone. |
+| `list_config_versions` | `agents:read` | Yes | List an agent's saved configuration versions (rollback lineage included). |
+| `get_change_history` | `agents:read` | Yes | List an agent's recent configuration changes (what changed, who changed it, old and new value, when). Every change is reversible with rollback_config. |
 | `list_observability_events` | `events:read` |  | List a business-scoped timeline of compact call-runtime events and redacted integration-delivery attempts. |
 | `list_tool_execution_logs` | `events:read` |  | List per-call voice-agent tool execution traces — outcome, latency, timeout, and a redacted result preview for each routed tool call. |
-| `list_subscription_history` | `billing:read` |  | List plan/price change history from subscription_change_history — the billing analogue of admin_change_history, written from the Stripe webhook and the right-size apply job. |
-| `list_overage_charges` | `billing:read` |  | List the idempotent overage-minutes ledger from billing_overage_charges (legacy per-minute-overage tiers only — 2026 plans carry no overage). |
-| `list_rightsize_recommendations` | `billing:read` |  | List per-period auto-right-size decisions from plan_rightsize_recommendations, including the dry_run -> notified -> (kept \| applied \| superseded) lifecycle. |
+| `list_subscription_history` | `billing:read` |  | List the business's plan and price changes over time. |
+| `list_overage_charges` | `billing:read` |  | List overage-minute charges (older per-minute plans only; current plans carry no overage). |
+| `list_rightsize_recommendations` | `billing:read` |  | List plan right-size recommendations per period and whether each was kept or applied. |
 
 ### Write and setup tools (111)
 
@@ -317,7 +317,7 @@ input schema.
 | `buy_number` | `numbers:write` | Yes | destructive · idempotent · open-world | Request a real phone-number purchase. |
 | `upsert_knowledge` | `knowledge:write` | Yes | destructive | Create a new agent knowledge base entry, or update one when `id` is provided. |
 | `upsert_product` | `products:write` |  | destructive | Create a new product row, or update one when `id` is provided. |
-| `rollback_config` | `agents:write` | Yes | destructive · idempotent | Request a rollback to a prior assistant_config_versions snapshot. |
+| `rollback_config` | `agents:write` | Yes | destructive · idempotent | Request a rollback to a saved configuration version from list_config_versions. |
 | `report_issue` | `support:write` |  | — | Report a problem with your KaiCalls agent, phone number, billing, or account. |
 
 > **Write-tool safety.** Tools marked destructive change live business configuration
