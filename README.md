@@ -1,4 +1,4 @@
-# KaiCalls MCP Server
+# KaiCalls MCP — Phone Call MCP Server
 
 > **A phone number for your business or your AI agent. Kai answers it and calls businesses for you.**
 
@@ -18,7 +18,7 @@ connect to the live endpoint below with your KaiCalls account.
 | **Transport** | Streamable HTTP (JSON-RPC over HTTP POST) |
 | **Auth** | OAuth 2.1 (PKCE S256 + DCR) **or** `kc_live_` API key as Bearer |
 | **Setup endpoint** | `https://www.kaicalls.com/api/mcp/acquisition` (setup-only subset for first-time buyers) |
-| **Tools** | 171 on the account endpoint (60 read-only, 111 write/setup); 37 on the setup endpoint |
+| **Tools** | 190 on the account endpoint (65 read-only, 125 write/setup, per the live server card on 2026-11-12); 37 on the setup endpoint |
 | **Homepage** | [KaiCalls](https://www.kaicalls.com?utm_source=mcp_registry&utm_medium=directory) |
 | **Provider** | [KaiCalls](https://www.kaicalls.com) · connor@kaicalls.com |
 | **License** | [MIT](LICENSE) (connector definitions and docs) |
@@ -127,7 +127,10 @@ docker run -i --rm -e KAICALLS_API_KEY=kc_live_... kaicalls-mcp
 
 ## Tools
 
-The account endpoint exposes 171 tools: 60 read-only and 111 write/setup. Every tool carries MCP
+The account endpoint exposes 190 tools: 65 read-only and 125 write/setup (live
+[`server-card.json`](https://www.kaicalls.com/.well-known/mcp/server-card.json), checked 2026-11-12).
+The snapshots of `mcp.json` and `server-card.json` in this repo still list 171 and are being
+refreshed; `tools/list` on the live endpoint is authoritative. Every tool carries MCP
 safety annotations (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`).
 The setup endpoint (`/api/mcp/acquisition`) exposes the 37 tools marked Yes in the
 **Setup surface** column, the subset that takes a new business from signup to a working number.
