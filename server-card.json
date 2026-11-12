@@ -202,6 +202,7 @@
         "set_webhook",
         "delete_webhook",
         "list_evals",
+        "create_eval",
         "run_eval",
         "find_voices",
         "list_voices",
@@ -217,6 +218,7 @@
         "upsert_knowledge",
         "list_products",
         "upsert_product",
+        "get_agent_config",
         "list_config_versions",
         "get_change_history",
         "rollback_config",
@@ -270,6 +272,7 @@
         "buy_number",
         "list_knowledge",
         "upsert_knowledge",
+        "get_agent_config",
         "list_config_versions",
         "get_change_history",
         "rollback_config"
@@ -3481,7 +3484,7 @@
     {
       "name": "configure_staff_alerts",
       "title": "Configure Staff Alerts",
-      "description": "Save business-owned staff alert recipients and post-call escalation rules. Saving settings does not prove provider delivery or owner receipt; activation notification proof is tracked separately.",
+      "description": "Save the business's alert contacts and post-call escalation rules. Read get_operational_settings first: each list you send (notification_phone, notification_email, escalation_rules) replaces the whole saved list, so include the entries to keep. Listed phones get after-call summary texts and escalation texts (one-recipient alerts go to the first phone); listed emails get escalation emails. Saving does not prove delivery.",
       "scope": "agents:write",
       "acquisitionStep": "confirm_live",
       "outputSchema": {
@@ -4828,7 +4831,7 @@
     {
       "name": "update_agent_config",
       "title": "Update Agent Configuration",
-      "description": "Edit an agent's live runtime configuration — greeting/first message, inbound or SMS prompt, the after-call summary and lead-score instructions, voice, language model, max call duration, and call-transfer settings — routed through the governed update broker so every change keeps the consent + audit trail (a versioned config snapshot and change history). Every write here is reversible: get_change_history and list_config_versions list what changed, and rollback_config undoes it. Mutating changes need an idempotency_key. When the business owner or an admin is signed in through this connector, their own changes apply immediately. High-impact live changes made with an API key or on someone else's behalf queue for the owner's review instead (the owner is notified with a review link). configure_agent_business_rules edits a single named operational-rules section.",
+      "description": "Edit an agent's live runtime configuration — greeting/first message, inbound or SMS prompt, the after-call summary and lead-score instructions, voice, language model, max call duration, and call-transfer settings — routed through the governed update broker so every change keeps the consent + audit trail (a versioned config snapshot and change history). Read get_agent_config first; inbound_prompt replaces the whole prompt. Each applied change is saved as a version (list_config_versions); rollback_config can restore a version's greeting, voice, prompt, model and summary/scoring, but not transfer settings or call length. Mutating changes need an idempotency_key. When the business owner or an admin is signed in through this connector, their own changes apply immediately. High-impact live changes made with an API key or on someone else's behalf queue for the owner's review instead (the owner is notified with a review link). configure_agent_business_rules edits a single named operational-rules section.",
       "scope": "agents:write",
       "acquisitionStep": "create_secretary",
       "outputSchema": {
@@ -8816,7 +8819,7 @@
     {
       "name": "list_evals",
       "title": "List Agent Evals",
-      "description": "List canned mock-conversation eval scenarios for an agent (or all accessible agents).",
+      "description": "List saved test scenarios for an agent (or all accessible agents). A new agent has none; create_eval adds one.",
       "scope": "evals:read",
       "outputSchema": {
         "type": "object",
@@ -8845,6 +8848,41 @@
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "create_eval",
+      "title": "Create Agent Test Scenario",
+      "description": "Save a test scenario for one of the business's agents: what a caller says and what the agent's reply must do to pass. run_eval then grades the agent against it. Saving places no call and changes nothing on the agent.",
+      "scope": "agents:write",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "eval": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
         "openWorldHint": false
       }
     },
@@ -9006,7 +9044,7 @@
     {
       "name": "create_agent",
       "title": "Create Agent",
-      "description": "Create a new KaiCalls agent — the secretary that answers this business’s calls (the live voice agent plus KaiCalls records) — with a system prompt, greeting, voice, and model. Every later change to this agent is saved as a version of its settings and reversible via rollback_config — history is listed by get_change_history / list_config_versions. Compliance: KaiCalls automatically applies state-aware AI-disclosure and consent handling to every agent it provisions, and flags high-risk business categories for extra review.",
+      "description": "Create a new KaiCalls agent — the secretary that answers this business’s calls (the live voice agent plus KaiCalls records) — with a system prompt, greeting, voice, and model. Its starting settings are saved as version 1 and each later change as a new version (list_config_versions); rollback_config restores a version's greeting, voice, prompt, model and summary/scoring. Compliance: KaiCalls automatically applies state-aware AI-disclosure and consent handling to every agent it provisions, and flags high-risk business categories for extra review.",
       "scope": "agents:write",
       "acquisitionStep": "create_secretary",
       "outputSchema": {
@@ -9530,9 +9568,45 @@
       }
     },
     {
+      "name": "get_agent_config",
+      "title": "Get Agent Configuration",
+      "description": "Read an agent's settings as the owner edits them: the editable inbound, outbound and text prompts, greeting, voice (with its list_voices id when it has one), model, call length, transfer settings, and the call summary and lead score instructions. Read this before update_agent_config: inbound_prompt there replaces the whole prompt, so edit the text returned here.",
+      "scope": "agents:read",
+      "acquisitionStep": "create_secretary",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the tool completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when success is false"
+          },
+          "agent": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "list_config_versions",
       "title": "List Agent Config Versions",
-      "description": "List the saved versions of an agent's settings, newest first, with which version each rollback came from. Secrets are never included. Pass `version` to fetch one version's full saved settings (config_snapshot) instead of the list.",
+      "description": "List the saved versions of an agent's settings, newest first: what saved each one (source), what changed (diff_summary), who (created_by) and which version a rollback came from. Secrets are never included. Pass `version` to fetch one version's full saved settings (config_snapshot). That snapshot holds the compiled prompt; to edit the prompt, read get_agent_config instead.",
       "scope": "agents:read",
       "acquisitionStep": "create_secretary",
       "outputSchema": {
@@ -9577,7 +9651,7 @@
     {
       "name": "get_change_history",
       "title": "Get Agent Change History",
-      "description": "List an agent's recent config-change audit trail (change_type, change_source, old/new value, timestamp) — the same change log the owner hears when they call their line and ask what changed. Every mutation KaiCalls makes to an agent (via update_agent_config, configure_agent_business_rules, the admin call-in secretary, or the dashboard) is logged here and reversible with rollback_config.",
+      "description": "List an agent's recent config-change audit trail (change_type, change_source, old/new value, timestamp) — the same change log the owner hears when they call their line and ask what changed. Every change KaiCalls makes to an agent (via update_agent_config, configure_agent_business_rules, the owner's call-in line, or the dashboard) is logged here. Rows carry no version number; to undo a change, pick a version from list_config_versions and use rollback_config.",
       "scope": "agents:read",
       "acquisitionStep": "create_secretary",
       "outputSchema": {
@@ -9616,7 +9690,7 @@
     {
       "name": "rollback_config",
       "title": "Rollback Agent Configuration",
-      "description": "Request a rollback to a saved version of the agent settings. This changes live greeting, voice, prompt and model settings. When the business owner or an admin is signed in through this connector, the rollback applies immediately; otherwise authenticated owner review of the exact stored request is required (the owner is notified with a review link). Caller-supplied authority fields never authorize execution. Targets are listed by list_config_versions and get_change_history; a pending request returns its review URL for the owner. After approval the rollback is itself saved as a new version, and secrets are never copied.",
+      "description": "Request a rollback to a saved version of the agent settings. It restores the version's greeting, voice, prompt (and the editable prompt copy, when the version saved one), model and call summary/scoring. Transfer settings, call length, tools and speech recognition stay as they are; the result lists what was and was not restored. When the business owner or an admin is signed in through this connector, the rollback applies immediately; otherwise the owner approves it from a review link. Targets are listed by list_config_versions. The rollback is itself saved as a new version, and secrets are never copied.",
       "scope": "agents:write",
       "acquisitionStep": "create_secretary",
       "outputSchema": {
@@ -9654,6 +9728,12 @@
               "null"
             ]
           },
+          "idempotency_key": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "risk_level": {
             "type": [
               "string",
@@ -9683,7 +9763,7 @@
               "object",
               "null"
             ],
-            "description": "On executed: { agent_id, restored_from_version, restored_fields, skipped_fields, new_version_number, warning? }."
+            "description": "On executed: { agent_id, restored_from_version, restored_fields, skipped_fields, not_restored, new_version_number, warning? }."
           }
         },
         "required": [
