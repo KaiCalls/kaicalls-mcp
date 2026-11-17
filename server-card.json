@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "KaiCalls",
     "version": "1.1.1",
-    "description": "Kai phones a business for you and reports back what they said. Also a business phone line with a secretary who answers calls, takes messages, books appointments and sends missed-call alerts."
+    "description": "Give your agent a phone: Kai calls a US or Canada business, asks your question and reports back what they said. The first call is free, with no card and no ID check. Also a business line with a secretary who answers calls, takes messages, books appointments and sends missed-call alerts."
   },
   "provider": {
     "organization": "KaiCalls",
