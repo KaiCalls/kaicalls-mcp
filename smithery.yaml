@@ -10,6 +10,10 @@
 # below is the source for that flag. See the publish command in README.md.
 #
 # Existing Smithery listing: https://smithery.ai/servers/connor-h8jd/kaicalls
+# As of 2026-11-17 that live listing is stale: it still points at the old
+# deployment URL (kaicalls.run.tools), carries the old "voice agents" copy and
+# makes the API key required. Republishing from this file (with the Smithery
+# account that owns connor-h8jd) moves it to the endpoint below.
 
 name: kaicalls
 target: remote
@@ -17,10 +21,12 @@ target: remote
 # Facts for the listing, mirrored from mcp.json and server.json.
 displayName: KaiCalls
 description: >-
-  AI phone answering service for businesses. Read calls, transcripts,
-  recordings, leads, voicemail, SMS and analytics, and run approved setup
-  actions on a hosted KaiCalls account.
-homepage: https://callmcp.ai?utm_source=mcp-registry
+  Give your agent a phone: it calls a US or Canada business, asks your
+  question and reports back what they said. The first call is free, with no
+  card and no ID check. The same server also runs a business line: Kai answers
+  calls, takes messages and texts you, and you read calls, transcripts, leads
+  and voicemail from your agent.
+homepage: https://www.kaicalls.com/ai-agent-phone-number?utm_source=smithery&utm_medium=directory
 upstreamUrl: https://www.kaicalls.com/api/mcp
 transport: streamable-http
 license: MIT

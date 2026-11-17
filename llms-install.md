@@ -3,6 +3,12 @@
 This file tells an AI coding agent (Cline, Claude, Cursor, or any MCP-capable
 assistant) how to connect a client to the **KaiCalls** MCP server.
 
+**What it gives your agent:** a phone. Your agent calls `make_call` with a US or
+Canada business number and what to ask; Kai calls, asks, and `check_call_status`
+returns what the business said. The first call to a business line (landline, VoIP
+or toll-free) is free, with no card and no ID check. The user signs in to KaiCalls
+once to connect. Kai does not place AI calls to cell phones.
+
 KaiCalls is a **hosted, remote** MCP server. There is **nothing to clone, build,
 install, or run locally** — no `npm install`, no `pip install`, no process to start.
 You connect a client to the live HTTPS endpoint and authenticate. Do not look for a

@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.kaicalls/kaicalls",
   "title": "KaiCalls",
-  "description": "A phone number for your business or your AI agent. Kai answers it and calls businesses for you.",
-  "version": "1.1.0",
+  "description": "Give your agent a phone: it calls businesses and reports back. First call free, no card.",
+  "version": "1.2.0",
   "websiteUrl": "https://www.kaicalls.com?utm_source=mcp_registry&utm_medium=directory",
   "repository": {
     "url": "https://github.com/KaiCalls/kaicalls-mcp",

@@ -1,7 +1,7 @@
 {
   "name": "kaicalls",
-  "version": "1.1.0",
-  "description": "A phone number for your business or your AI agent. Kai answers it and calls businesses for you.",
+  "version": "1.2.0",
+  "description": "Give your agent a phone: it calls businesses and reports back. First call free, no card.",
   "contextFileName": "GEMINI.md",
   "mcpServers": {
     "kaicalls": {

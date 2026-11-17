@@ -1,10 +1,13 @@
 # KaiCalls MCP — Phone Call MCP Server
 
-> **A phone number for your business or your AI agent. Kai answers it and calls businesses for you.**
+> **Give your agent a phone: it calls businesses and reports back. First call free, no card.**
 
-Get a business number (or keep yours) with Kai built in. Your phones ring first; Kai
-answers misses and after-hours calls, takes the details and texts you. See
+Your agent hands Kai a business's number and a question. Kai calls, asks, presses
+through phone menus, and your agent gets back what the business said. It works in
+any MCP client (Claude, ChatGPT, Cursor, your own agent) through one hosted server.
+The same server can also give a business its own line that Kai answers. See
 [current plans and pricing](https://www.kaicalls.com/pricing).
+
 This repository is the **public connector definition** for the hosted KaiCalls MCP
 server — it documents the endpoint, authentication, and tool catalog so MCP clients
 and directories can discover and connect to it.
@@ -26,13 +29,11 @@ connect to the live endpoint below with your KaiCalls account.
 
 ---
 
-## Give your AI agent a phone number
+## For agent builders: give your agent a phone
 
-A person can connect ChatGPT, Claude or any MCP client and get a real US number:
-
-- **Kai calls businesses for you.** `make_call` places an errand call to a US or Canada business (a shop, clinic, office or restaurant), asks the question, presses keys on phone menus, and `check_call_status` returns the answer. Kai says up front that it is an assistant calling for you, and it does not place AI calls to personal cell phones.
-- **Kai answers the callback.** The business calls your own number back, and Kai takes the message.
-- **The first call for a new connector account is free.** After that, calls run on a plan: see [kaicalls.com/ai-agent-phone-number](https://www.kaicalls.com/ai-agent-phone-number?utm_source=mcp_registry&utm_medium=directory).
+- **One call, one answer.** `make_call` takes a US or Canada business number and what to ask (a shop, clinic, office or restaurant). Kai places the call, presses keys on phone menus, and `check_call_status` returns what the business said. Kai says up front that it is an assistant calling for someone, and it does not place AI calls to cell phones.
+- **The first call is free.** A new account gets its first call to a US or Canada business line (landline, VoIP or toll-free) at no charge: no card and no ID check. The person signs in to KaiCalls once (Google, passkey, or email and password) when the client connects. The free call is capped at five minutes. After that, calls run on a plan: see [kaicalls.com/ai-agent-phone-number](https://www.kaicalls.com/ai-agent-phone-number?utm_source=mcp_registry&utm_medium=directory).
+- **Two endpoints, one server.** `https://www.kaicalls.com/api/mcp` is the full set of tools for an account; `https://www.kaicalls.com/api/mcp/acquisition` is the short set a new user needs to get a business line. Sign in with OAuth 2.1, or send a `kc_live_` key in `X-KaiCalls-API-Key`.
 
 ---
 
@@ -367,7 +368,7 @@ All return `200` and are CORS-open:
 Registry id: `com.kaicalls/kaicalls` (published & active). The registry entry is generated from
 [`server.json`](server.json); the Smithery listing from [`smithery.yaml`](smithery.yaml).
 
-The `1.1.0` metadata in this source change is a registry candidate. Source review
+The `1.2.0` metadata in this source change is a registry candidate. Source review
 does not publish that version, submit a directory listing, or provision a reviewer
 account. Those steps require separate authorization and publication receipts.
 
