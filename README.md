@@ -412,7 +412,3 @@ Use [kaicalls-js](https://github.com/KaiCalls/kaicalls-js) for JavaScript/TypeSc
 The connector definitions and documentation in this repository are released under
 the [MIT License](LICENSE). The KaiCalls service itself is a proprietary hosted
 product governed by its [Terms of Service](https://www.kaicalls.com/terms-of-service).
-
-## License
-
-MIT, covering the connector definitions and documentation in this repository. The KaiCalls service itself is a hosted product governed by its [Terms of Service](https://www.kaicalls.com/terms-of-service).
