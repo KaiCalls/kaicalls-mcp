@@ -1,0 +1,30 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "callmcp",
+  "version": "1.0.0",
+  "description": "Give your Hermes agent a phone number. It calls businesses for you and reports back what they said, waits on hold for you, texts from its own number, and joins your video meetings to take notes.",
+  "author": {
+    "name": "KaiCalls",
+    "url": "https://callmcp.ai"
+  },
+  "homepage": "https://callmcp.ai/?utm_source=hermes&utm_medium=plugin",
+  "repository": "https://github.com/KaiCalls/kaicalls-mcp",
+  "license": "MIT",
+  "keywords": ["phone", "calls", "phone-number", "sms", "hold", "meetings", "errands", "callmcp"],
+  "extensions": {
+    "com.nousresearch.hermes": {
+      "config_schema": {
+        "api_key": {
+          "type": "secret",
+          "env": "CALLMCP_API_KEY",
+          "description": "Your CallMCP key (starts with kc_live_). Create one at kaicalls.com under Settings > API Keys."
+        }
+      },
+      "servers": {
+        "callmcp": {
+          "trust": "untrusted"
+        }
+      }
+    }
+  }
+}

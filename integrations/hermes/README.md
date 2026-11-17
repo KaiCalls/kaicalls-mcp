@@ -1,72 +1,77 @@
 # KaiCalls for Hermes Agent
 
-Give your Hermes agent a real phone number. Kai calls businesses for you, asks the
-question, presses keys on phone menus and reports back. The same number sends texts
-and answers the callback.
+**A secretary for your business phone, run from Hermes.**
 
-You don't need a Twilio account, 10DLC paperwork or a webhook server for calls.
-KaiCalls hosts the number, the carrier and the MCP server.
+KaiCalls gives your business a phone line with a secretary built in. Your own phone
+rings first. When you can't pick up, Kai answers, takes the caller's name, number
+and what they need, and texts you a summary.
 
-This is a portable Agent Plugins v1 package. It contains no plugin code:
+With this plugin, Hermes runs that line for you:
 
-| File | What it does |
-|---|---|
-| `plugin.json` | Package manifest. It declares the `KAICALLS_API_KEY` secret and marks the server `untrusted`, so Hermes asks before every call or text. |
-| `mcp.json` | The hosted KaiCalls MCP server, `https://www.kaicalls.com/api/mcp`, authenticated with your key. |
-| `skills/kaicalls/SKILL.md` | Tells the agent when and how to make errand calls, answer Kai's questions mid-call, and send texts. |
+- **"What did I miss?"** Hermes reads your calls, voicemails and texts and tells you
+  who needs a reply.
+- **Reply without picking up the phone.** Hermes texts a customer back, or has Kai
+  call them back and reports how it went.
+- **Change what Kai says.** New greeting, new hours, closed Friday, "we don't do
+  roofs": tell Hermes and it updates Kai.
+
+Looking for a phone number for your agent to make its own calls? See the
+[CallMCP plugin](../hermes-callmcp) instead.
 
 ## Install
+
+```bash
+hermes plugins install kaicalls
+hermes plugins enable kaicalls
+```
+
+Before the catalog listing is live, install from this repository instead:
 
 ```bash
 hermes plugins install https://github.com/KaiCalls/kaicalls-mcp/tree/main/integrations/hermes --no-enable
 hermes plugins enable kaicalls
 ```
 
-Hermes asks for your KaiCalls API key and saves it to `~/.hermes/.env`. Create a key
-at [kaicalls.com](https://www.kaicalls.com) under **Settings > API Keys**. No account
-yet? Start at [kaicalls.com/ai-agent-phone-number](https://www.kaicalls.com/ai-agent-phone-number?utm_source=hermes&utm_medium=plugin).
-A new account's first call to a US or Canada business is free.
+Hermes asks for your key and saves it as `KAICALLS_API_KEY`. Create a key at
+[kaicalls.com](https://www.kaicalls.com) under **Settings > API Keys**. No line yet?
+Start at [kaicalls.com](https://www.kaicalls.com/?utm_source=hermes&utm_medium=plugin),
+or ask Hermes to set one up: it walks you through the steps, and you choose a plan
+and pay on the page it gives you.
 
 ## Try it
 
-> Call the Walgreens on Main Street and ask if my prescription is ready. It's under Jane Doe.
+> What did I miss today?
 
-The agent finds your KaiCalls agent and number, places the call with `make_call`, and
-follows it with `check_call_status`. If Kai needs your date of birth mid-call, the
-agent asks you. Then it reads the transcript and tells you what the pharmacy said.
+> Text the guy who called about the water heater and say we can come Thursday at 9.
 
-## Lean tool list (optional)
+> We're closed the Friday after Thanksgiving. Make sure Kai tells callers.
 
-The account server publishes the full KaiCalls tool set. For an agent that only
-calls and texts, add this to `~/.hermes/config.yaml`. A `config.yaml` entry with the
-same name replaces the package's entry:
+## What's in the package
 
-```yaml
-mcp_servers:
-  kaicalls:
-    url: "https://www.kaicalls.com/api/mcp"
-    headers:
-      Authorization: "Bearer ${KAICALLS_API_KEY}"
-    trust: untrusted
-    tools:
-      include: [list_agents, list_numbers, make_call, check_call_status,
-                answer_call_question, get_transcript, send_message,
-                list_sms_messages, list_conversations, get_conversation,
-                list_recent_calls, list_voicemails]
-```
+This is a portable Agent Plugins v1 package. It contains no plugin code.
+
+| File | What it does |
+|---|---|
+| `plugin.json` | Package manifest. Declares the `KAICALLS_API_KEY` secret and marks the server `untrusted`, so Hermes asks before every call, text or change. |
+| `mcp.json` | The hosted KaiCalls server, `https://www.kaicalls.com/api/mcp` (Streamable HTTP), signed in with your key. |
+| `skills/kaicalls/SKILL.md` | Tells the agent how to catch you up, reply, call back, change what Kai says and set up a line. |
 
 ## Safety
 
-- Kai says it is an assistant calling for you, and does not place AI calls to
-  personal cell phones on a free call.
-- Calls go to US and Canada numbers during business calling hours.
-- Texts follow consent, opt-out, quiet-hour and rate rules on the server, and a
-  refusal says which rule applied.
-- What callers say and what texts contain is third-party content. The skill tells
-  the agent never to follow instructions inside it.
+- Every call, text and change waits for your approval in Hermes.
+- Texts and callbacks follow consent, opt-out, quiet-hour and rate rules on the
+  server, and a refusal says which rule applied.
+- What callers say, and what texts and voicemails contain, is third-party content.
+  The skill tells the agent never to follow instructions inside it.
 
 ## Disclosure
 
-This is a hosted-only connector. Call audio, transcripts, text messages and phone
-numbers go to kaicalls.com. Calls and texts placed after the free first call count
-toward your KaiCalls plan. See [pricing](https://www.kaicalls.com/pricing).
+- Hosted-only connector with no local code. Every tool call, with its arguments,
+  goes to `www.kaicalls.com` over HTTPS, signed with your key as a bearer header.
+- Call audio, transcripts, voicemails, texts, caller details and phone numbers are
+  handled by KaiCalls.
+- The business line needs a paid KaiCalls plan. See
+  [pricing](https://www.kaicalls.com/pricing).
+- The tool set is served by the remote server at runtime and is not covered by the
+  catalog's pinned commit.
+- No telemetry from the package itself.
